@@ -3,6 +3,7 @@ on:
   push:
     paths:
       - project.zip
+      - .github/workflows/unzip.yml
 permissions:
   contents: write
 jobs:

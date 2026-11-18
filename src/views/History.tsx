@@ -209,7 +209,10 @@ export function History() {
                             <span>
                               {tm(ts)}
                               {nn && (nn.m || nn.n) ? (
-                                <br /><span class="k">{[nn.m, nn.n].filter(Boolean).join(' ')}</span>
+                                <>
+                                  <br />
+                                  <span class="k">{[nn.m, nn.n].filter(Boolean).join(' ')}</span>
+                                </>
                               ) : null}
                             </span>
                             <span class="acts">

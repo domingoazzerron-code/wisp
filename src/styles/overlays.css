@@ -1,0 +1,24 @@
+/* account lives in the sidebar now */
+.pill #acctbtn{display:none}
+.dclose{width:36px;height:36px;border:0;border-radius:50%;background:var(--fill);color:var(--ink);display:grid;place-items:center;cursor:pointer;padding:0}
+.dclose svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+.dtl{display:flex;align-items:center;gap:10px}
+.hint{font-size:12px;color:var(--mute);margin:0 0 12px;line-height:1.45}
+.dz{margin-top:20px;border:1px solid var(--badsoft);background:var(--card)}
+.ov{position:fixed;inset:0;background:rgba(6,12,9,.5);display:flex;align-items:flex-end;justify-content:center;z-index:50;animation:fade .2s var(--ease)}
+@keyframes fade{from{opacity:0}}
+.box{position:relative;width:100%;max-width:520px;background:var(--card);border-radius:26px 26px 0 0;padding:26px 20px calc(20px + env(safe-area-inset-bottom,0px));animation:sheet .3s cubic-bezier(.32,.72,0,1)}
+.box:focus{outline:0}
+.box::before{content:"";position:absolute;top:8px;left:50%;width:36px;height:4px;margin-left:-18px;border-radius:2px;background:var(--line2)}
+@keyframes sheet{from{transform:translateY(100%)}}
+.box h3{margin:0 0 6px;font-size:19px;letter-spacing:-.02em}
+.box p{margin:0 0 16px;color:var(--mute);font-size:13px}
+.box .chips{margin:0 0 16px}
+.sheetbtns{display:flex;flex-direction:column;gap:8px}
+@media (min-width:600px){.ov{align-items:center}.box{border-radius:26px;padding-top:24px}.box::before{display:none}}
+:root[data-fx="calm"] *,:root[data-fx="calm"] *::before,:root[data-fx="calm"] *::after,:root[data-fx="quiet"] *,:root[data-fx="quiet"] *::before,:root[data-fx="quiet"] *::after{animation:none!important;transition:none!important}
+:root:not([data-fx="full"]) .float{display:none}
+@media (max-width:350px){.tiles{grid-template-columns:1fr}}
+
+
+.opv{flex:none;overflow:visible;--s:0;--bf:#fff}

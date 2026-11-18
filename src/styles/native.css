@@ -1,0 +1,4 @@
+/* ===== Native feel ===== */
+html,body{overscroll-behavior-y:none}
+button,.bar a,.drawer a,.flm{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+

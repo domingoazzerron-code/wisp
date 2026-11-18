@@ -1,0 +1,26 @@
+/* ---- Account panel ---- */
+.otb[data-o="beanie"] .of-beanie,.otb[data-o="party"] .of-party,.otb[data-o="wizard"] .of-wizard,.otb[data-o="shades"] .of-shades,.otb[data-o="scarf"] .of-scarf,.otb[data-o="bow"] .of-bow,.otb[data-o="flower"] .of-flower,.otb[data-o="headphones"] .of-headphones,.otb[data-o="crown"] .of-crown,.otb[data-o="cape"] .of-cape{display:inline}
+.otb[data-o="beanie"] .ev[data-ev="1"],.otb[data-o="beanie"] .ev[data-ev="4"],.otb[data-o="party"] .ev[data-ev="1"],.otb[data-o="party"] .ev[data-ev="4"],.otb[data-o="wizard"] .ev[data-ev="1"],.otb[data-o="wizard"] .ev[data-ev="4"],.otb[data-o="flower"] .ev[data-ev="1"],.otb[data-o="flower"] .ev[data-ev="4"],.otb[data-o="headphones"] .ev[data-ev="1"],.otb[data-o="headphones"] .ev[data-ev="4"],.otb[data-o="crown"] .ev[data-ev="1"],.otb[data-o="crown"] .ev[data-ev="4"]{display:none}
+.ot{--s:0;--bf:#fff;display:block;width:44px;height:64px;margin:14px auto 0;pointer-events:none}
+.ot .bob,.ot .eyes{animation:none!important}
+.ot svg{filter:none!important}
+.ofg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.otb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:0 4px 10px;border:1.5px solid transparent;border-radius:16px;background:var(--fill);color:var(--ink);font:600 12px/1.2 var(--font);min-height:104px;transition:transform .12s var(--ease),border-color .2s,background .2s}
+.otb:active:not(:disabled){transform:scale(.96)}
+.otb em{font-style:normal;margin-top:6px}
+.otb i{font-style:normal;font-size:10.5px;font-weight:500;color:var(--mute);min-height:12px}
+.otb.on{border-color:var(--g);background:var(--gsoft)}
+.otb:disabled{opacity:.55;cursor:default}
+.otb:disabled .ot{filter:grayscale(1)}
+.stage{display:flex;align-items:center;gap:14px;padding:28px 16px 12px;border-radius:20px;background:var(--gban);color:#fff}
+.stage .opv{background:none;width:56px;height:80px;margin-top:4px}
+.stage .k{flex:1;color:rgba(255,255,255,.9);font-size:13px;margin:0;min-height:18px}
+.acc-id{display:flex;flex-direction:column;gap:2px;margin:0 8px 14px;padding:12px 14px;border-radius:14px;background:var(--fill)}
+.acc-id b{font-size:14px;word-break:break-all}
+.acc-id small{font-size:12px;color:var(--mute)}
+.acc-id:has(#dem:empty){display:none}
+.accs:not(:has(a:not([hidden]))){display:none}
+.drawer a.dng{color:var(--bad)}
+.drawer .stage{margin:0}
+.pill #acctbtn{color:var(--ink)}
+.pill button[aria-expanded="true"]{background:var(--fill)}

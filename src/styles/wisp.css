@@ -1,0 +1,35 @@
+/* ---- Wisp sprite ---- */
+#masc{--bf:#fff;--bf:color-mix(in srgb,#fff calc(100% - var(--s)*13%),#8693A3)}
+:is(#mas,#fwm,#opv,.ot) svg{transition:filter .8s;width:100%;height:100%;overflow:visible;filter:drop-shadow(0 0 calc(9px - var(--s)*1.2px) rgba(255,255,255,calc(.9 - var(--s)*.14)))}
+:is(#mas,#fwm,#opv,.ot) .hv{transform:translateY(calc(-4px - var(--s)*2.5px));transition:transform .9s cubic-bezier(.4,0,.2,1)}
+:is(#mas,#fwm,#opv,.ot) .bob{animation:wob 3.4s ease-in-out infinite}@keyframes wob{50%{transform:translateY(-4px)}}
+:is(#mas,#fwm,#opv,.ot) .bd{transform-box:fill-box;transform-origin:50% 100%;transform:scale(calc(1 - var(--s)*.05),calc(1 + var(--s)*.03)) rotate(calc(var(--s)*-.5deg));opacity:calc(1 - var(--s)*.05);transition:transform .9s cubic-bezier(.4,0,.2,1),opacity .9s}
+:is(#mas,#fwm,#opv,.ot) .b1,:is(#mas,#fwm,#opv,.ot) .b2{fill:var(--bf);transition:fill .9s,opacity .7s}:is(#mas,#fwm,#opv,.ot) .b1{opacity:calc(3 - var(--s))}:is(#mas,#fwm,#opv,.ot) .b2{opacity:calc(var(--s) - 2)}
+:is(#mas,#fwm,#opv,.ot) .am{fill:none;stroke:var(--bf);stroke-width:7;stroke-linecap:round;transform-box:fill-box;transform-origin:50% 0;transform:scaleY(calc(1 + var(--s)*.14));transition:stroke .9s,transform .9s}
+:is(#mas,#fwm,#opv,.ot) .hl{fill:#fff;opacity:calc(.55 - var(--s)*.09);transition:opacity .9s}
+:is(#mas,#fwm,#opv,.ot) .fc{transform:translateY(calc(var(--s)*-2.6px));transition:transform .9s cubic-bezier(.4,0,.2,1)}
+:is(#mas,#fwm,#opv,.ot) .e{fill:#14201a;transform-box:fill-box;transform-origin:center;transform:scale(calc(1 + var(--s)*.17),calc(1 + var(--s)*.33));transition:transform .8s cubic-bezier(.4,0,.2,1)}
+:is(#mas,#fwm,#opv,.ot) .er{transform:translate(calc(var(--s)*.5px),calc(var(--s)*.7px)) scale(calc(1 + var(--s)*.1),calc(1 + var(--s)*.22))}
+:is(#mas,#fwm,#opv,.ot) .eyes{transform-box:fill-box;transform-origin:center;animation:blk 4.8s infinite}@keyframes blk{0%,93%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.08)}}
+[data-st="4"] .eyes,[data-st="5"] .eyes,[data-st="6"] .eyes{animation:none}
+:is(#mas,#fwm,#opv,.ot) .sh{fill:#fff;opacity:calc(3 - var(--s));transition:opacity .6s}:is(#mas,#fwm,#opv,.ot) .ch{fill:#FF9AA2;opacity:calc(.6 - var(--s)*.2);transition:opacity .6s}
+:is(#mas,#fwm,#opv,.ot) .m{fill:none;stroke:#14201a;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;transform-box:fill-box;transform-origin:center;transition:opacity .6s,transform .8s}
+:is(#mas,#fwm,#opv,.ot) .ma{opacity:calc(2 - var(--s))}:is(#mas,#fwm,#opv,.ot) .mb{opacity:calc(1 - max(var(--s) - 2,2 - var(--s)))}:is(#mas,#fwm,#opv,.ot) .mc{opacity:calc(1 - max(var(--s) - 3,3 - var(--s)))}
+:is(#mas,#fwm,#opv,.ot) .md{opacity:calc(var(--s) - 3);transform:scaleY(calc(1 + max(var(--s) - 4,0)*.6))}
+:is(#mas,#fwm,#opv,.ot) .sd{fill:rgba(0,0,0,.25);transform-box:fill-box;transform-origin:center;transform:scale(calc(1 - var(--s)*.1));opacity:calc(1 - var(--s)*.12);transition:transform .9s,opacity .9s}
+:is(#mas,#fwm,#opv,.ot) .g1,:is(#mas,#fwm,#opv,.ot) .g2{opacity:calc((var(--s) - 3)*.22);transition:opacity .7s;animation:glt 2.6s infinite}:is(#mas,#fwm,#opv,.ot) .g1{fill:#4FE3D8}:is(#mas,#fwm,#opv,.ot) .g2{fill:#FF4F9A;animation-direction:reverse;animation-duration:2.1s}
+@keyframes glt{0%,84%,100%{transform:none}87%{transform:translate(-5px,1px)}91%{transform:translate(4px,-1px)}95%{transform:translate(-2px,2px)}}
+
+
+.u-mt6{margin-top:6px!important}.u-mt8{margin-top:8px!important}.u-mt12{margin-top:12px!important}.u-mt14{margin-top:14px!important}.u-mt16{margin-top:16px!important}.u-mb4{margin-bottom:4px!important}.u-mb12{margin-bottom:12px!important}
+
+
+/* ---- Cigarette: Wisp lights one after the 3rd of the day (#masc[data-cig="1"]) ---- */
+#mas .cig{opacity:0;transition:opacity .5s}
+#masc[data-cig="1"] #mas .cig{opacity:1}
+#mas .smk{fill:none;stroke:rgba(255,255,255,.55);stroke-width:2.2;stroke-linecap:round;stroke-dasharray:4 5;opacity:0}
+#masc[data-cig="1"] #mas .smk{animation:smoke 3.2s linear infinite}
+#masc[data-cig="1"] #mas .ember{animation:ember 1.8s ease-in-out infinite}
+@keyframes smoke{0%{opacity:0;transform:translateY(6px)}25%{opacity:.8}100%{opacity:0;transform:translateY(-8px)}}
+@keyframes ember{50%{fill:#FFC36B}}
+@media (prefers-reduced-motion:reduce){#masc[data-cig="1"] #mas .smk,#masc[data-cig="1"] #mas .ember{animation:none}#masc[data-cig="1"] #mas .smk{opacity:.5}}

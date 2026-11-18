@@ -1,0 +1,15 @@
+/* ===== Auth gate ===== */
+#auth{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto}
+#auth .ac{width:100%;max-width:380px;background:var(--card);border-radius:var(--r);box-shadow:var(--sh2);padding:28px 22px}
+#auth h1{margin:0 0 4px;font-size:24px;letter-spacing:-.02em;text-align:center}
+#auth .as{margin:0 0 20px;color:var(--mute);text-align:center;font-size:14px}
+#auth .tabs{display:flex;gap:4px;padding:3px;background:var(--fill);border-radius:999px;margin-bottom:16px}
+#auth .tabs button{flex:1;min-height:40px;border:0;border-radius:999px;background:none;color:var(--mute);font:600 14px var(--font)}
+#auth .tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:var(--sh1)}
+#auth label{display:block;min-height:0;padding:0;border-top:0;gap:0;font-size:12.5px;font-weight:600;color:var(--mute);margin:0 0 6px}
+#auth input{width:100%;min-height:48px;padding:0 14px;margin-bottom:14px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--bg);color:var(--ink);font:16px var(--font)}
+#auth input:focus{outline:2px solid var(--g);outline-offset:1px}
+#auth .am{min-height:20px;margin:-2px 0 12px;font-size:13px;color:var(--bad)}
+#auth .am.ok{color:var(--ok)}
+#auth .lg{width:56px;height:56px;margin:0 auto 12px;display:block;border-radius:14px}
+

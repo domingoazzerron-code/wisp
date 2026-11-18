@@ -1,0 +1,8 @@
+/* ---- Outfits ---- */
+g.of{display:none}
+:root[data-outfit="beanie"] :is(#mas,#fwm,#opv) .of-beanie,:root[data-outfit="party"] :is(#mas,#fwm,#opv) .of-party,:root[data-outfit="wizard"] :is(#mas,#fwm,#opv) .of-wizard,:root[data-outfit="shades"] :is(#mas,#fwm,#opv) .of-shades,:root[data-outfit="scarf"] :is(#mas,#fwm,#opv) .of-scarf,:root[data-outfit="bow"] :is(#mas,#fwm,#opv) .of-bow{display:inline}
+
+:root[data-outfit="beanie"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="beanie"] :is(#mas,#fwm,#opv) .ev[data-ev="4"],:root[data-outfit="party"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="party"] :is(#mas,#fwm,#opv) .ev[data-ev="4"],:root[data-outfit="wizard"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="wizard"] :is(#mas,#fwm,#opv) .ev[data-ev="4"]{display:none}
+
+:root[data-outfit="flower"] :is(#mas,#fwm,#opv) .of-flower,:root[data-outfit="headphones"] :is(#mas,#fwm,#opv) .of-headphones,:root[data-outfit="crown"] :is(#mas,#fwm,#opv) .of-crown,:root[data-outfit="cape"] :is(#mas,#fwm,#opv) .of-cape{display:inline}
+:root[data-outfit="flower"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="flower"] :is(#mas,#fwm,#opv) .ev[data-ev="4"],:root[data-outfit="headphones"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="headphones"] :is(#mas,#fwm,#opv) .ev[data-ev="4"],:root[data-outfit="crown"] :is(#mas,#fwm,#opv) .ev[data-ev="1"],:root[data-outfit="crown"] :is(#mas,#fwm,#opv) .ev[data-ev="4"]{display:none}

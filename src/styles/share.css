@@ -1,0 +1,10 @@
+#shr{position:fixed;inset:0;z-index:150;background:rgba(4,8,6,.78);display:flex;align-items:center;justify-content:center;padding:calc(14px + env(safe-area-inset-top,0px)) 14px calc(14px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:fade .2s var(--ease)}
+#shr[hidden]{display:none}
+#shr .shb{width:100%;max-width:400px;background:var(--card);border-radius:26px;padding:16px 16px 10px;box-shadow:0 20px 60px rgba(0,0,0,.45)}
+#shr .sht{font-size:15px;font-weight:700;text-align:center;margin:2px 0 12px}
+#shr canvas{display:block;width:auto;height:auto;max-width:100%;max-height:50dvh;margin:0 auto;border-radius:18px;box-shadow:0 8px 28px rgba(0,0,0,.35)}
+#shr .shs{display:flex;gap:6px;margin:14px 0 12px}
+#shr .shs button{flex:1;min-height:40px;border:1.5px solid var(--line2);border-radius:999px;background:none;color:var(--mute);font:600 12.5px var(--font);padding:0 4px}
+#shr .shs button.on{background:var(--g);border-color:var(--g);color:var(--onG)}
+#shr .shr2{display:flex;gap:8px}
+#shr .shr2 .btn{flex:1}

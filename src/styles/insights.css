@@ -1,0 +1,29 @@
+/* ---- insights / plan ---- */
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.tile{background:var(--card);box-shadow:var(--sh1);border-radius:16px;padding:12px;min-width:0}
+.tile .v{font-size:16px;font-weight:700;letter-spacing:-.03em;white-space:nowrap}
+.tile .k{text-transform:uppercase;letter-spacing:.06em;font-weight:600;font-size:10px}
+.tile .sub{font-size:11px}
+.wl{display:block;padding:2px 0;border-top:1px solid var(--line)}.wl:first-child{border-top:0}
+.chart{width:100%;height:auto;display:block;max-height:220px}
+.chart text{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+.heat{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;margin-top:8px}
+.heat i{aspect-ratio:1;border-radius:6px;background:var(--fill)}.heat i.d{background:var(--g)}
+.legend{display:flex;align-items:center;justify-content:flex-end;gap:5px;margin-top:10px;font-size:11px;color:var(--mute)}
+.legend i{width:14px;height:14px;border-radius:4px;background:var(--g)}.legend i:first-of-type{background:var(--fill)}
+.tr{margin:12px 0 0}.tr .t{display:flex;justify-content:space-between;gap:8px;font-size:13px;margin-bottom:6px}
+.tr .b{height:8px;border-radius:4px;background:var(--fill)}.tr .b i{display:block;height:100%;border-radius:4px;background:var(--g)}
+.ml{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.ml:first-child{border-top:0}
+.mi{flex:none;width:24px;height:24px;margin-top:1px;border-radius:50%;border:1.5px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--onG)}
+.ml.on .mi{background:var(--g);border-color:var(--g)}
+.mt{flex:1;min-width:0;display:flex;flex-direction:column}.mt b{font-size:14px}.mt span{font-size:12px;color:var(--mute)}
+.ml:not(.on) .mt b{color:var(--mute)}
+.md{font-size:11px;color:var(--mute);flex:none}
+.li{padding:12px 0;border-top:1px solid var(--line)}.k+.li{border-top:0}.li b{display:block}.li p{margin:2px 0 0;font-size:13px;color:var(--mute)}
+.fwrow{display:flex;align-items:center;gap:14px}
+.fwp{flex:none;width:92px;height:128px;border-radius:16px;background:var(--gban);overflow:hidden}
+#fwm{width:100%;height:100%}
+#fwm svg{filter:drop-shadow(0 0 8px rgba(247,213,107,.95)) drop-shadow(0 0 4px rgba(91,190,120,.8))}
+.ev{transition:opacity .6s var(--ease)}
+

@@ -1,0 +1,22 @@
+{
+  "id": "/",
+  "name": "Wisp Tracker",
+  "short_name": "Tracker",
+  "description": "Track, cut back and quit, one day at a time.",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F3F5F3",
+  "theme_color": "#FFFFFF",
+  "categories": ["health", "lifestyle"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Log one", "short_name": "Log", "url": "/?a=log" },
+    { "name": "I'm craving", "short_name": "Craving", "url": "/?a=crave" }
+  ]
+}

@@ -1,0 +1,13 @@
+/* ---- history ---- */
+.day{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:0 12px;margin:18px 4px 8px;font-weight:700}
+.day span{font-weight:500;color:var(--mute);font-size:12px}
+.day .g{flex-basis:100%;font-size:11px;margin-top:1px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:56px;padding:8px 0;border-top:1px solid var(--line);font-weight:500}
+.row:first-child{border-top:0}
+.row>span:first-child{flex:1;min-width:0}
+.row .k{font-weight:400}
+.acts{display:flex;align-items:center;gap:0;flex:none}
+.tagbtn{min-height:44px;margin-right:2px;padding:0 12px;border-radius:999px;border:1.5px dashed var(--line2);background:none;color:var(--mute);font:600 12px var(--font);white-space:nowrap}
+.tagbtn.on{border:1.5px solid transparent;background:var(--gsoft);color:var(--gt)}
+#sumc .row b{font-variant-numeric:tabular-nums}
+

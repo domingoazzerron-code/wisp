@@ -6,6 +6,7 @@ import { Toasts } from './components/Toasts.tsx';
 import { Overlay } from './components/Overlay.tsx';
 import { Onboarding } from './components/Onboarding.tsx';
 import { AppLock } from './components/AppLock.tsx';
+import { AuthGate } from './components/AuthGate.tsx';
 import { AccountDrawer } from './components/AccountDrawer.tsx';
 import { Today } from './views/Today.tsx';
 import { History } from './views/History.tsx';
@@ -18,7 +19,6 @@ import { useCraveWatch } from './hooks/useCraveWatch.ts';
 import { useGapRecord } from './hooks/useGapRecord.ts';
 import { getState } from './state/index.ts';
 import { applyFx, applyOutfitAttr, applyTheme, fxLevel, type Theme } from './lib/theme.ts';
-import { startSync } from './sync/index.ts';
 
 // Same routes as legacy. All main views are rebuilt (Today through Tips).
 export const VIEWS = ['today', 'history', 'setup', 'plan', 'insights', 'summary', 'tips'] as const;
@@ -46,7 +46,7 @@ export function App() {
   useCraveWatch();
   useGapRecord();
 
-  // Theme / motion / outfit attrs + cloud sync on boot.
+  // Theme / motion / outfit attrs on boot. (Cloud sync starts inside <AuthGate />.)
   useEffect(() => {
     const st = getState();
     applyTheme((st.theme as Theme) || 'auto');
@@ -58,7 +58,6 @@ export function App() {
       if (s2.theme === 'auto') applyTheme('auto');
     };
     mq?.addEventListener?.('change', onScheme);
-    void startSync();
     return () => mq?.removeEventListener?.('change', onScheme);
   }, []);
 
@@ -112,6 +111,7 @@ export function App() {
       <Toasts />
       <Overlay />
       <Onboarding />
+      <AuthGate />
       <AppLock />
     </>
   );

@@ -29,10 +29,6 @@ details.card summary{color:var(--ink)}
 .day{margin:20px 4px 8px}
 .wl{border-top:0;padding:3px 0;color:var(--mute);font-size:13px}
 .wl:first-child{color:var(--ink)}
-#auth .ac{box-shadow:none;border:1px solid var(--line);padding:30px 22px 26px}
-#auth .lg{width:64px;height:auto;border-radius:0;margin-bottom:10px}
-#auth input{background:var(--fill);border-color:transparent}
-#auth input:focus{border-color:var(--g);outline:0}
 
 /* ===== Polish: summary + empty states ===== */
 .card.empty{padding:22px 18px 24px}

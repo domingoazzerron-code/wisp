@@ -1,15 +1,85 @@
-/* ===== Auth gate ===== */
-#auth{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto}
-#auth .ac{width:100%;max-width:380px;background:var(--card);border-radius:var(--r);box-shadow:var(--sh2);padding:28px 22px}
-#auth h1{margin:0 0 4px;font-size:24px;letter-spacing:-.02em;text-align:center}
-#auth .as{margin:0 0 20px;color:var(--mute);text-align:center;font-size:14px}
-#auth .tabs{display:flex;gap:4px;padding:3px;background:var(--fill);border-radius:999px;margin-bottom:16px}
-#auth .tabs button{flex:1;min-height:40px;border:0;border-radius:999px;background:none;color:var(--mute);font:600 14px var(--font)}
-#auth .tabs button[aria-selected="true"]{background:var(--card);color:var(--ink);box-shadow:var(--sh1)}
+/* ===== Auth gate (sign up / sign in) ===== */
+#auth{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:calc(24px + env(safe-area-inset-top,0px)) 20px calc(24px + env(safe-area-inset-bottom,0px));overflow-y:auto;animation:authFade .3s var(--ease) both}
+#auth.boot{animation:none}
+#auth.out{opacity:0;transform:scale(1.02);pointer-events:none;transition:opacity .34s var(--ease),transform .34s var(--ease)}
+#auth .ac{width:100%;max-width:380px;margin:auto;background:var(--card);border-radius:var(--r);border:1px solid var(--line);padding:26px 22px 24px;animation:authCard .65s var(--ease) both}
+#auth h1{margin:0 0 4px;font-size:24px;letter-spacing:-.02em;text-align:center;animation:authRise .55s var(--ease) .18s both}
+#auth .as{margin:0 0 20px;color:var(--mute);text-align:center;font-size:14px;animation:authRise .55s var(--ease) .22s both}
+#auth .aform{margin:0}
+#auth .aform>*{animation:authRise .55s var(--ease) both}
+#auth .aform>:nth-child(1){animation-delay:.26s}
+#auth .aform>:nth-child(2){animation-delay:.3s}
+#auth .aform>:nth-child(3){animation-delay:.34s}
+#auth .aform>:nth-child(4){animation-delay:.38s}
+#auth .aform>:nth-child(5){animation-delay:.42s}
+#auth .aform>:nth-child(n+6){animation-delay:.46s}
+
+/* error shake wraps the whole card content so it never restarts the entrance animation */
+#auth .shk.on{animation:authShake .46s cubic-bezier(.36,.07,.19,.97)}
+
+/* segmented Sign up / Sign in with a sliding pill */
+#auth .tabs{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:0;padding:3px;background:var(--fill);border-radius:999px;margin-bottom:16px}
+#auth .tabs i{position:absolute;top:3px;bottom:3px;left:3px;width:calc((100% - 6px)/2);border-radius:999px;background:var(--card);box-shadow:var(--sh1);transition:transform .45s var(--ease);will-change:transform}
+#auth .tabs[data-mode="in"] i{transform:translateX(100%)}
+#auth .tabs button{position:relative;z-index:1;min-height:40px;border:0;border-radius:999px;background:none;color:var(--mute);font:600 14px var(--font);transition:color .25s var(--ease)}
+#auth .tabs button[aria-selected="true"]{background:none;color:var(--ink);box-shadow:none}
+
 #auth label{display:block;min-height:0;padding:0;border-top:0;gap:0;font-size:12.5px;font-weight:600;color:var(--mute);margin:0 0 6px}
-#auth input{width:100%;min-height:48px;padding:0 14px;margin-bottom:14px;border-radius:var(--rs);border:1.5px solid var(--line2);background:var(--bg);color:var(--ink);font:16px var(--font)}
-#auth input:focus{outline:2px solid var(--g);outline-offset:1px}
+#auth input{width:100%;min-height:48px;padding:0 14px;margin-bottom:14px;border-radius:var(--rs);border:1.5px solid transparent;background:var(--fill);color:var(--ink);font:16px var(--font);text-align:left;transition:border-color .2s var(--ease),box-shadow .25s var(--ease),background .2s var(--ease)}
+#auth input:focus{border-color:var(--g);outline:0;box-shadow:0 0 0 3px var(--gsoft)}
 #auth .am{min-height:20px;margin:-2px 0 12px;font-size:13px;color:var(--bad)}
 #auth .am.ok{color:var(--ok)}
-#auth .lg{width:56px;height:56px;margin:0 auto 12px;display:block;border-radius:14px}
+#auth .am span{display:block;animation:authMsg .4s var(--ease) both}
 
+/* primary button: label swap + busy spinner */
+#auth .go{position:relative;overflow:hidden}
+#auth .go-t{display:inline-block;animation:authFade .3s var(--ease) both;transition:opacity .2s var(--ease),transform .25s var(--ease)}
+#auth .go-s{position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;border:2.5px solid currentColor;border-right-color:transparent;opacity:0;transform:scale(.6);transition:opacity .2s var(--ease),transform .25s var(--ease)}
+#auth .go.busy:disabled{opacity:.85}
+#auth .go.busy .go-t{opacity:0;transform:translateY(-6px)}
+#auth .go.busy .go-s{opacity:1;transform:none;animation:authSpin .7s linear infinite}
+
+/* "Forgot password?" expands in smoothly on the Sign in tab */
+#auth .forgot{display:grid;grid-template-rows:0fr;opacity:0;margin-top:0;visibility:hidden;transition:grid-template-rows .45s var(--ease),opacity .3s var(--ease),margin-top .45s var(--ease),visibility 0s .45s}
+#auth .forgot>div{min-height:0;overflow:hidden}
+#auth .forgot.show{grid-template-rows:1fr;opacity:1;margin-top:8px;visibility:visible;transition-delay:0s}
+
+/* ---- Mascot ---- */
+#auth .lg{display:block;width:92px;height:auto;margin:0 auto 8px;overflow:visible;animation:authMascot .9s cubic-bezier(.34,1.5,.5,1) .05s both}
+#auth .lg-body{fill:#fff;stroke:#CBD3CE;stroke-width:3}
+#auth .lg-ch{fill:#FF9AA2;opacity:.6}
+#auth .lg-sd{fill:rgba(0,0,0,.16);transform-box:fill-box;transform-origin:center;animation:authShadow 3.4s ease-in-out infinite}
+#auth .lg-bob{animation:authBob 3.4s ease-in-out infinite}
+#auth .lg-look{transform:translate(var(--lx,0px),var(--ly,0px));transition:transform .4s var(--ease)}
+#auth .lg-eyes{transform-box:fill-box;transform-origin:center;animation:authBlink 4.8s infinite}
+#auth .lg-mouth{fill:none;stroke:#14201a;stroke-width:2.6;stroke-linecap:round;transition:opacity .3s var(--ease)}
+#auth .lg-frown{opacity:0}
+#auth .lg.sad .lg-smile{opacity:0}
+#auth .lg.sad .lg-frown{opacity:1}
+/* Arms swing about the shoulder. 0deg = hand over the eye; the rest angle lets it hang at the side. */
+#auth .lg-arm{transition:transform .55s cubic-bezier(.34,1.4,.5,1)}
+#auth .lg-arm-l{transform-origin:32px 70px;transform:rotate(172.7deg)}
+#auth .lg-arm-r{transform-origin:88px 70px;transform:rotate(-172.7deg);transition-delay:.04s}
+#auth .lg.cover .lg-arm-l,#auth .lg.cover .lg-arm-r{transform:rotate(0deg)}
+#auth .lg.cover .lg-arm-r{transition-delay:.04s}
+#auth .lg:not(.cover) .lg-arm-l{transition-delay:.04s}
+#auth .lg:not(.cover) .lg-arm-r{transition-delay:0s}
+#auth .lg-arm-o,#auth .lg-arm-i{fill:none;stroke-linecap:round}
+#auth .lg-arm-o{stroke:#CBD3CE;stroke-width:12.5}
+#auth .lg-arm-i{stroke:#fff;stroke-width:7.5}
+#auth .lg-hand{fill:#fff;stroke:#CBD3CE;stroke-width:2.5}
+
+@keyframes authFade{from{opacity:0}to{opacity:1}}
+@keyframes authCard{from{opacity:0;transform:translateY(22px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes authRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes authMascot{0%{opacity:0;transform:translateY(-26px) scale(.7)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes authMsg{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+@keyframes authShake{10%,90%{transform:translateX(-1px)}20%,80%{transform:translateX(3px)}30%,50%,70%{transform:translateX(-5px)}40%,60%{transform:translateX(5px)}}
+@keyframes authSpin{to{transform:rotate(360deg)}}
+@keyframes authBob{50%{transform:translateY(-3.5px)}}
+@keyframes authShadow{50%{transform:scale(.88);opacity:.75}}
+@keyframes authBlink{0%,93%,100%{transform:scaleY(1)}96.5%{transform:scaleY(.08)}}
+
+/* Respect the in-app "Motion" setting and the OS reduced-motion preference */
+html[data-fx="calm"] #auth *,html[data-fx="quiet"] #auth *,html[data-fx="calm"] #auth,html[data-fx="quiet"] #auth{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}
+@media (prefers-reduced-motion:reduce){html:not([data-fx="full"]) #auth *,html:not([data-fx="full"]) #auth{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}}

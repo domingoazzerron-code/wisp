@@ -146,13 +146,13 @@ export function slipPrompt(
 }
 
 /** Open the trigger picker for a log entry (legacy pickTrigger). */
-export function pickTrigger(ts: number): void {
+export function pickTrigger(ts: number, map: 'tags' | 'crt' = 'tags'): void {
   openBase({
     title: 'What set it off?',
-    body: 'Entry at ' + tm(ts),
+    body: (map === 'crt' ? 'Craving at ' : 'Entry at ') + tm(ts),
     chips: TAGS.concat(getState().ctags || []),
     chipKey: String(ts),
-    chipMap: 'tags',
+    chipMap: map,
     allowClearChip: true,
     showCancel: false,
   });

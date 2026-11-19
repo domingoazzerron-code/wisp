@@ -8,7 +8,7 @@ import { liveIndex } from '../lib/current.ts';
 import { per } from '../lib/streaks.ts';
 import { TAGS, pickTrigger } from '../components/Overlay.tsx';
 import { deleteLogEntry, savePastEntry } from '../actions/log.ts';
-import { deleteCraving, setCravingTrigger } from '../actions/craving.ts';
+import { deleteCraving } from '../actions/craving.ts';
 
 const PAGE = 30;
 
@@ -286,17 +286,14 @@ export function History() {
                       <div class="row" key={ts}>
                         <span>{tm(ts)}</span>
                         <span class="acts">
-                          <select
-                            class="ctg"
-                            aria-label={'Trigger for the craving at ' + tm(ts)}
-                            value={s.crt[ts] || ''}
-                            onChange={(e) => setCravingTrigger(ts, (e.target as HTMLSelectElement).value)}
+                          <button
+                            type="button"
+                            class={'tagbtn' + (s.crt[ts] ? ' on' : '')}
+                            aria-label={'Set trigger for the craving at ' + tm(ts)}
+                            onClick={() => pickTrigger(ts, 'crt')}
                           >
-                            <option value="">Trigger</option>
-                            {TAGS.concat(s.ctags || []).map((t) => (
-                              <option key={t} value={t}>{t}</option>
-                            ))}
-                          </select>
+                            {s.crt[ts] || '+ Trigger'}
+                          </button>
                           <button
                             type="button"
                             class="del ib"

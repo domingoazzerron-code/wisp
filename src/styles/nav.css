@@ -1,10 +1,13 @@
-/* ---- nav: flat bar with labelled tabs; the current tab is tinted green ---- */
+/* ---- nav: flat bar with labelled tabs; a green highlight slides to the current tab ---- */
 nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);width:min(calc(100% - 32px),420px);z-index:10;--nb:68px;--lift:0px}
 .bar{position:relative;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;height:var(--nb);padding:0 6px;border-radius:26px;background:var(--card);border:1px solid var(--line);box-shadow:var(--sh2)}
 .bar a{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;height:56px;margin:0 2px;border-radius:18px;color:var(--mute);font:600 11px var(--font);letter-spacing:.01em;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:color .2s var(--ease),background .2s var(--ease)}
 .bar a svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--ease)}
 .bar a:active svg,.plus:active svg{transform:scale(.88)}
-.bar a[aria-current="page"]{color:var(--g);background:color-mix(in srgb,var(--g) 14%,transparent)}
+.ind{position:absolute;top:6px;left:6px;margin-left:2px;width:calc((100% - 12px)/5 - 4px);height:56px;border-radius:18px;background:color-mix(in srgb,var(--g) 14%,transparent);transform:translateX(calc(var(--i,0)*(100% + 4px)));transition:transform .45s cubic-bezier(.34,1.45,.5,1),opacity .2s;pointer-events:none;opacity:0}
+.ind[data-on="1"]{opacity:1}
+.bar a[aria-current="page"]{color:var(--g)}
+@media (prefers-reduced-motion:reduce){.ind{transition:none}}
 .plus{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:manipulation;justify-self:center;display:grid;place-items:center;width:50px;height:50px;border:0;padding:0;border-radius:50%;background:var(--g);color:var(--onG);box-shadow:0 4px 10px color-mix(in srgb,var(--g) 38%,transparent)}
 .plus svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;transition:transform .2s var(--ease)}
 .plus.pop svg{animation:pp .3s var(--ease)}@keyframes pp{40%{transform:scale(.8)}}

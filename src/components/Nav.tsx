@@ -13,6 +13,9 @@ const ICON = {
   add: <path d="M12 5v14M5 12h14" />,
 };
 
+// Bar order. The highlight slides by slot index (the + button takes the middle slot).
+const SLOTS = ['today', 'history', 'add', 'insights', 'plan'] as const;
+
 const LABEL = { today: 'Today', history: 'History', insights: 'Insights', plan: 'Plan' };
 
 function Tab({ view, current }: { view: keyof typeof LABEL; current: string }) {
@@ -25,7 +28,7 @@ function Tab({ view, current }: { view: keyof typeof LABEL; current: string }) {
 }
 
 /**
- * Bottom bar: four labelled tabs and a + button (long-press quick menu). The current tab is tinted green.
+ * Bottom bar: four labelled tabs and a + button (long-press quick menu). A green highlight slides to the current tab.
  */
 export function Nav({ current }: { current: string }) {
   const addRef = useRef<HTMLButtonElement>(null);
@@ -34,6 +37,11 @@ export function Nav({ current }: { current: string }) {
   const lpFired = useRef(false);
   const lpT = useRef(0);
   const tipT = useRef(0);
+
+  // The green highlight slides to the current tab. It keeps its last spot while you are on a page that has no tab.
+  const idx = (SLOTS as readonly string[]).indexOf(current);
+  const lastIdx = useRef(0);
+  if (idx >= 0) lastIdx.current = idx;
 
   // One-time tip: hold + for quick actions (legacy qhShow).
   useEffect(() => {
@@ -110,6 +118,7 @@ export function Nav({ current }: { current: string }) {
       />
       <nav aria-label="Main">
         <div class="bar">
+          <i class="ind" aria-hidden="true" data-on={idx >= 0 ? '1' : '0'} style={{ '--i': String(lastIdx.current) }} />
           <Tab view="today" current={current} />
           <Tab view="history" current={current} />
           <button

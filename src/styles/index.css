@@ -9,7 +9,6 @@
 @import './insights.css';
 @import './nav.css';
 @import './drawer.css';
-@import './themes.css';
 @import './overlays.css';
 @import './account.css';
 @import './outfits.css';
@@ -20,3 +19,6 @@
 @import './missions.css';
 @import './share.css';
 @import './lock.css';
+@import './scene.css';
+@import './today2.css';
+@import './settings.css';

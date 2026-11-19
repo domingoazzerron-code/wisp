@@ -20,10 +20,20 @@ export function replaceState(next: State): void {
   perDay = null;
 }
 
+let lastSaveWarn = 0;
+
+/** Tells the UI (app.tsx shows a toast) that the device refused the write. At most once a minute. */
+function warnSaveFailed(): void {
+  const t = Date.now();
+  if (t - lastSaveWarn < 6e4) return;
+  lastSaveWarn = t;
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('wisp:save-failed'));
+}
+
 export function save(): void {
   sorted = null;
   perDay = null;
-  saveState(state);
+  if (!saveState(state)) warnSaveFailed();
   listeners.forEach((fn) => fn());
 }
 

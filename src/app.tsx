@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { Nav } from './components/Nav.tsx';
 import { Header } from './components/Header.tsx';
 import { MenuDrawer } from './components/MenuDrawer.tsx';
-import { Toasts } from './components/Toasts.tsx';
+import { Toasts, toast } from './components/Toasts.tsx';
 import { Overlay } from './components/Overlay.tsx';
 import { Onboarding } from './components/Onboarding.tsx';
 import { AppLock } from './components/AppLock.tsx';
@@ -25,7 +25,7 @@ export const VIEWS = ['today', 'history', 'setup', 'plan', 'insights', 'summary'
 type View = (typeof VIEWS)[number];
 
 function currentView(): View {
-  const v = location.hash.replace('#', '');
+  const v = location.hash.replace('#', '').split('/')[0];
   return (VIEWS as readonly string[]).includes(v) ? (v as View) : 'today';
 }
 
@@ -59,6 +59,20 @@ export function App() {
     };
     mq?.addEventListener?.('change', onScheme);
     return () => mq?.removeEventListener?.('change', onScheme);
+  }, []);
+
+  // The Today hero's avatar asks for the account drawer.
+  useEffect(() => {
+    const on = () => { setMenuOpen(false); setAccountOpen(true); };
+    window.addEventListener('wisp:open-account', on);
+    return () => window.removeEventListener('wisp:open-account', on);
+  }, []);
+
+  // The device refused to store the data (private mode, full storage): say so instead of losing it silently.
+  useEffect(() => {
+    const on = () => toast('Couldn’t save on this device. Storage is blocked or full, so new entries may be lost.');
+    window.addEventListener('wisp:save-failed', on);
+    return () => window.removeEventListener('wisp:save-failed', on);
   }, []);
 
   // Close menu on route change (legacy route() closes the drawer).

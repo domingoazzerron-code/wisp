@@ -50,7 +50,8 @@ export function sanitize(state: State): State {
     'stars', 'earned', 'misN', 'greetDay', 'greetAt', 'recapSeen',
   ].forEach((q) => { if (typeof o[q] !== 'number' || !isFinite(o[q]) || o[q] < 0) o[q] = d[q]; });
   ['cur', 'name', 'reasons'].forEach((q) => { if (typeof o[q] !== 'string') o[q] = d[q]; });
-  if (['auto', 'light', 'dark', 'glass'].indexOf(o.theme) < 0) o.theme = 'auto';
+  if (o.theme === 'glass') o.theme = 'dark'; // the Glass theme was removed; it was a dark look
+  if (['auto', 'light', 'dark'].indexOf(o.theme) < 0) o.theme = 'auto';
   if (OUTFITS.indexOf(o.outfit) < 0) o.outfit = 'none';
   ['mis', 'chal', 'badges'].forEach((q) => { if (!isObj(o[q])) o[q] = d[q]; });
   for (k in d.mis) if (typeof o.mis[k] !== typeof d.mis[k]) o.mis[k] = d.mis[k];
@@ -65,6 +66,8 @@ export function sanitize(state: State): State {
   if (!Array.isArray(o.mlog)) o.mlog = [];
   o.mlog = o.mlog.filter((x: unknown) => typeof x === 'number' && isFinite(x)).slice(-400);
   if (o.cres && (typeof o.cres !== 'object' || Array.isArray(o.cres))) o.cres = null;
+  if (!Array.isArray(o.del)) o.del = [];
+  o.del = o.del.filter((x: unknown) => typeof x === 'number' && isFinite(x) && x > 0).slice(-500);
   o.stars = Math.floor(o.stars);
   return state;
 }
@@ -106,9 +109,10 @@ export function loadState(storage: KeyValueStorage | null = browserStorage()): S
   return stateFromObject(p);
 }
 
-/** Writes the state. Ignores storage errors (private mode, quota), like the legacy app. */
-export function saveState(state: State, storage: KeyValueStorage | null = browserStorage()): void {
-  try { storage?.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+/** Writes the state. Returns false when it could not be written (private mode, quota, blocked storage). */
+export function saveState(state: State, storage: KeyValueStorage | null = browserStorage()): boolean {
+  if (!storage) return false;
+  try { storage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; } catch { return false; }
 }
 
 /**

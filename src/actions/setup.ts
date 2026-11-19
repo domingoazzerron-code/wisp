@@ -4,6 +4,7 @@ import { toast } from '../components/Toasts.tsx';
 import { askConfirm } from '../components/Overlay.tsx';
 import { TAGS } from '../components/Overlay.tsx';
 import type { State } from '../state/types.ts';
+import { applyFx, applyTheme, type FxLevel, type Theme } from '../lib/theme.ts';
 
 /** YYYY-MM-DD for filenames (legacy ymdNow). */
 export function ymdNow(now: number = Date.now()): string {
@@ -216,4 +217,21 @@ export function patchField(key: keyof State, value: string | number | boolean): 
     save();
     return;
   }
+}
+
+/** Appearance: store the choice and apply it to the page right away. */
+export function setTheme(t: Theme): void {
+  const st = getState();
+  st.theme = t;
+  save();
+  applyTheme(t);
+}
+
+/** Motion and haptics: Full, Calm or Off. Off also turns vibration off. */
+export function setFx(level: FxLevel): void {
+  const st = getState();
+  st.fx = level;
+  st.hap = level === 3 ? 0 : 1;
+  save();
+  applyFx(level);
 }

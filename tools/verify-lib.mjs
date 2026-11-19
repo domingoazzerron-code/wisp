@@ -48,12 +48,17 @@ function fakeStorage(raw) {
   return { data, getItem: (k) => (data.has(k) ? data.get(k) : null), setItem: (k, v) => { data.set(k, v); } };
 }
 
+// The new `del` list (deleted-entry tombstones) does not exist in the legacy app: ignore it when comparing.
+const __strip = (v) => typeof v === 'string'
+  ? v.replace(/,"del":\[[^\]]*\]/g, '').replace(/"del":\[[^\]]*\],?/g, '')
+  : (v && typeof v === 'object' ? JSON.parse(JSON.stringify(v, (k, x) => (k === 'del' ? undefined : x))) : v);
+
 let seed = 987654; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
 const ri = (a, b) => a + Math.floor(rnd() * (b - a + 1));
 const pick = (a) => a[Math.floor(rnd() * a.length)];
 
 let fail = 0, checks = 0;
-const check = (name, a, b) => { checks++; if (!isDeepStrictEqual(a, b)) { fail++; if (fail <= 10) console.log('MISMATCH', name, '\n  legacy:', JSON.stringify(a)?.slice(0, 300), '\n  new:   ', JSON.stringify(b)?.slice(0, 300)); } };
+const check = (name, a0, b0) => { const a = __strip(a0), b = __strip(b0); checks++; if (!isDeepStrictEqual(a, b)) { fail++; if (fail <= 10) console.log('MISMATCH', name, '\n  legacy:', JSON.stringify(a)?.slice(0, 300), '\n  new:   ', JSON.stringify(b)?.slice(0, 300)); } };
 
 // Clock values: random moments in 2025-2027 plus moments hugging midnight and DST changes in common zones.
 const specials = ['2025-03-09T06:59:59Z', '2025-03-09T07:00:01Z', '2025-03-30T00:59:59Z', '2025-03-30T01:00:01Z', '2025-10-26T00:59:59Z', '2025-10-26T01:00:01Z',

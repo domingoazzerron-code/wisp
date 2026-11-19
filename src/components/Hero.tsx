@@ -1,12 +1,11 @@
 import { useRef } from 'preact/hooks';
-import { heroStatus, lastLine, gapLine, paceProjection, progressPct } from '../lib/today.ts';
+import { heroStatus, paceProjection, progressPct } from '../lib/today.ts';
 
 interface Props {
   count: number;
   limit: number;
   quitActive: boolean;
   canUndo: boolean;
-  last: number;
   gapMin: number;
   gapBase: number;
   now: number;
@@ -16,7 +15,7 @@ interface Props {
 }
 
 /** The big number, status line, progress bar and the small facts under it. */
-export function Hero({ count, limit, quitActive, canUndo, last, gapMin, gapBase, now, craving, onUndo, onWait }: Props) {
+export function Hero({ count, limit, quitActive, canUndo, gapMin, gapBase, craving, now, onUndo, onWait }: Props) {
   const prev = useRef<number | null>(null);
   const dir = prev.current === null || prev.current === count ? '' : count > prev.current ? 'rup' : 'rdn';
   prev.current = count;
@@ -25,7 +24,10 @@ export function Hero({ count, limit, quitActive, canUndo, last, gapMin, gapBase,
   const pct = progressPct(count, limit);
   const d = new Date(now);
   const pace = paceProjection(count, limit, d.getHours(), d.getMinutes());
-  const gap = gapLine(gapMin, gapBase, now);
+  // The chips above already show "Last one" and "Next one in". When no gap is set the chip shows the pace instead,
+  // so this line only appears when it adds something: a gap is set (chip shows the countdown) or you are over pace.
+  const gapOn = gapMin > 0 && !!gapBase;
+  const showPace = !!pace && (gapOn || pace.over);
 
   return (
     <div class={'card hero ' + cls} id="hero">
@@ -45,11 +47,9 @@ export function Hero({ count, limit, quitActive, canUndo, last, gapMin, gapBase,
         <i style={{ width: pct + '%' }} />
       </div>
       <div class="facts">
-        <div class="last">{lastLine(last, now)}</div>
-        <div class="last">{gap}</div>
         <div class="last" id="pace">
-          {pace ? 'On pace for ' + pace.projected + ' today' + (pace.over ? ', over your limit of ' + limit : '') : ''}
-          {pace && pace.over && (craving
+          {showPace && pace ? 'On pace for ' + pace.projected + ' today' + (pace.over ? ', over your limit of ' + limit : '') : ''}
+          {showPace && pace && pace.over && (craving
             ? ' \u00b7 timer running'
             : <>{' '}<button class="btn ter sm" id="pw" type="button" onClick={onWait}>Wait it out</button></>)}
         </div>

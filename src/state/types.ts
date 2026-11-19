@@ -1,7 +1,7 @@
 // Shape of the saved app state (what lives in localStorage under STORAGE_KEY).
 // Ported from legacy def() (legacy/index.html ~line 1026). Timestamps are ms since epoch.
 
-export type Theme = 'auto' | 'light' | 'dark' | 'glass';
+export type Theme = 'auto' | 'light' | 'dark';
 
 export type Outfit =
   | 'none' | 'beanie' | 'party' | 'wizard' | 'shades' | 'scarf' | 'bow'
@@ -64,6 +64,7 @@ export interface State {
   cel: Celebration | null;
   celDay: number;
   log: number[];                 // every logged cigarette (timestamps)
+  del: number[];                 // timestamps of entries deleted or re-timed, so cloud sync does not bring them back
   setup: number;
   fx: 0 | 1 | 2 | 3;
   rng: 7 | 30 | 90;

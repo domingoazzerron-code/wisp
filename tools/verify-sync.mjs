@@ -18,11 +18,16 @@ if (from < 0 || to < 0) throw new Error('legacy sync code moved; update tools/ve
 const legacyChunk = lines.slice(from, to).join('\n');          // uni, merge, reconcile
 const stateChunk = lines.slice(1024, 1054).join('\n');         // legacy state load (for comparing results)
 
+// The new `del` list (deleted-entry tombstones) does not exist in the legacy app: ignore it when comparing.
+const __strip = (v) => typeof v === 'string'
+  ? v.replace(/,"del":\[[^\]]*\]/g, '').replace(/"del":\[[^\]]*\],?/g, '')
+  : (v && typeof v === 'object' ? JSON.parse(JSON.stringify(v, (k, x) => (k === 'del' ? undefined : x))) : v);
+
 let seed = 987654; const rnd = () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
 const pick = (a) => a[Math.floor(rnd() * a.length)];
 const ts = () => 1.7e12 + Math.floor(rnd() * 3e10);
 let checks = 0, fail = 0;
-const check = (name, a, b) => { checks++; if (!isDeepStrictEqual(a, b)) { fail++; if (fail <= 8) console.log('MISMATCH', name, '\n  legacy:', JSON.stringify(a)?.slice(0, 400), '\n  new:   ', JSON.stringify(b)?.slice(0, 400)); } };
+const check = (name, a0, b0) => { const a = __strip(a0), b = __strip(b0); checks++; if (!isDeepStrictEqual(a, b)) { fail++; if (fail <= 8) console.log('MISMATCH', name, '\n  legacy:', JSON.stringify(a)?.slice(0, 400), '\n  new:   ', JSON.stringify(b)?.slice(0, 400)); } };
 
 // random but well-formed states (sanitized), some with keys removed
 function randState() {
@@ -33,7 +38,7 @@ function randState() {
   s.mlog = Array.from({ length: Math.floor(rnd() * 12) }, ts);
   for (const k of ['tags', 'notes', 'crt']) for (const t of s.log.slice(0, 4)) if (rnd() < 0.6) s[k][t] = pick(['a', 'b', 'c']);
   s.mile = { m1: ts(), m2: ts() }; s.badges = rnd() < 0.5 ? { b1: ts() } : {}; s.diary = rnd() < 0.5 ? { [ts()]: 'x' } : {};
-  s.waited = pick([0, 5, 20, 100]); s.limit = pick([5, 8, 10]); s.theme = pick(['auto', 'dark', 'glass']); s.name = pick(['', 'Ana', 'Bo']);
+  s.waited = pick([0, 5, 20, 100]); s.limit = pick([5, 8, 10]); s.theme = pick(['auto', 'dark', 'light']); s.name = pick(['', 'Ana', 'Bo']);
   s.setup = pick([0, 1]);
   if (rnd() < 0.3) s.log = s.log.concat(s.log.slice(0, 3)); // duplicates
   return sanitize(s);

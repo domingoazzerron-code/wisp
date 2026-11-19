@@ -109,20 +109,20 @@ describe('chalStates / challengeEnded', () => {
 });
 
 describe('endChalPatch / stars', () => {
-  it('awards 10 stars for 3-day win', () => {
-    expect(chalStarReward(3)).toBe(10);
+  it('awards 20 stars for 3-day win', () => {
+    expect(chalStarReward(3)).toBe(20);
     const c: Challenge = { id: 'lim', days: 3, start: 0, grace: 0 };
     const p = endChalPatch(c, true, 1000, 5, 5, {});
     expect(p.ok).toBe(true);
-    expect(p.stars).toBe(15);
+    expect(p.stars).toBe(25);
     expect(p.badges!['lim-3']).toBe(1000);
     expect(p.cel!.txt).toContain('Stay within your limit');
   });
-  it('awards 25 stars for 7-day win', () => {
-    expect(chalStarReward(7)).toBe(25);
+  it('awards 50 stars for 7-day win', () => {
+    expect(chalStarReward(7)).toBe(50);
     const c: Challenge = { id: 'crav', days: 7, start: 0, grace: 1 };
     const p = endChalPatch(c, true, 2000, 0, 0, {});
-    expect(p.stars).toBe(25);
+    expect(p.stars).toBe(50);
     expect(p.cres.ok).toBe(1);
   });
   it('fail clears chal and sets cres.ok=0', () => {

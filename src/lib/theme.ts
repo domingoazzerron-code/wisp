@@ -2,7 +2,7 @@
 
 import type { State } from '../state/types.ts';
 
-export type Theme = 'auto' | 'light' | 'dark' | 'glass';
+export type Theme = 'auto' | 'light' | 'dark';
 export type FxLevel = 1 | 2 | 3;
 
 export function fxLevel(s: Pick<State, 'fx'>): FxLevel {
@@ -27,15 +27,13 @@ export function fxNote(level: FxLevel): string {
 }
 
 export function applyTheme(theme: Theme): void {
-  const glass = theme === 'glass';
   const dark =
-    glass ||
     theme === 'dark' ||
     (theme === 'auto' &&
       typeof window !== 'undefined' &&
       !!window.matchMedia?.('(prefers-color-scheme: dark)').matches);
-  document.documentElement.setAttribute('data-theme', glass ? 'glass' : dark ? 'dark' : 'light');
-  const tc = glass ? '#0E0F12' : dark ? '#0C0F0D' : '#FFFFFF';
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const tc = dark ? '#0C0F0D' : '#FFFFFF';
   document.querySelectorAll('meta[name="theme-color"]').forEach((m) => {
     m.setAttribute('content', tc);
     m.removeAttribute('media');

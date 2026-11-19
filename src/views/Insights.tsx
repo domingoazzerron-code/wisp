@@ -25,6 +25,11 @@ import {
 
 type Tab = 'over' | 'pat' | 'money';
 
+const ICON = {
+  clock: <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5" /><path d="M12 7.5V12l3 2" /></svg>,
+  shield: <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l7 3v5.5c0 4.4-2.9 7.6-7 9.5-4.1-1.9-7-5.1-7-9.5V6z" /><path d="M8.8 12.2l2.2 2.2 4.2-4.6" /></svg>,
+};
+
 /**
  * Insights view (step 7d): Overview, Patterns, Money & health.
  * Includes diary, last-week card, and weekly recap (share opens Summary share).
@@ -52,6 +57,17 @@ export function Insights() {
     getState().rng = r;
     save();
   }
+
+  // The 7 / 30 / 90 switch lives inside the chart card on Overview and at the top of the other tabs.
+  const rangeSeg = (cls: string) => (
+    <div class={'seg ' + cls} id="rng" role="group" aria-label="Time range" ref={rngRef}>
+      {([7, 30, 90] as Rng[]).map((r) => (
+        <button type="button" key={r} data-r={r} class={rng === r ? 'on' : ''} aria-pressed={rng === r} onClick={() => setRng(r)}>
+          {r} days
+        </button>
+      ))}
+    </div>
+  );
 
   const hasData = s.log.length > 0 || (s.cravs && s.cravs.length > 0);
   const L = lim();
@@ -110,20 +126,7 @@ export function Insights() {
         </button>
       </div>
 
-      <div class="seg u-mb12" id="rng" role="group" aria-label="Time range" ref={rngRef}>
-        {([7, 30, 90] as Rng[]).map((r) => (
-          <button
-            type="button"
-            key={r}
-            data-r={r}
-            class={rng === r ? 'on' : ''}
-            aria-pressed={rng === r}
-            onClick={() => setRng(r)}
-          >
-            {r} days
-          </button>
-        ))}
-      </div>
+      {tab !== 'over' && rangeSeg('u-mb12')}
 
       {tab === 'over' && (
         <div data-tab="ins" data-k="over">
@@ -137,56 +140,18 @@ export function Insights() {
             </div>
           )}
 
-          {recap && (
-            <div class="card" id="rcc">
-              <div class="dh">
-                <span class="bn">{recap.cur ? 'Your week with Wisp' : 'Last week with Wisp'}</span>
-                <small>{recap.range}</small>
-              </div>
-              <div class="rch">
-                <span class="big">{recap.hl.v}</span>
-                <span class="k">{recap.hl.u}</span>
-              </div>
-              <div class="rcs">
-                {recap.story.map((line, i) => (
-                  <p key={i}>{line}</p>
-                ))}
-              </div>
-              <div class="btnrow">
-                <button class="btn ter sm" type="button" onClick={shareWeek}>
-                  Share this week
-                </button>
-              </div>
+          <div class="card ovh" id="ovh">
+            <div class="dh">
+              <span class="bn">Cigarettes per day</span>
             </div>
-          )}
-
-          {week && (
-            <div class="card" id="wkc">
-              <div class="dh">
-                <span class="bn">Last week</span>
-                <small>{week.range}</small>
-              </div>
-              <div class="big">{week.tot} cigarettes</div>
-              <div class="k left" style={{ marginTop: 6, lineHeight: 1.6 }}>
-                {week.lines.map((line, i) => (
-                  <div key={i}>{line}</div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          <div class="card">
-            <div class="k">{wk.label}</div>
-            <div class="big">
-              {wk.w1}
-              {wk.w1 === 1 ? ' cigarette' : ' cigarettes'}
+            {rangeSeg('rngin')}
+            <div class="ovn">
+              <span class="big">{wk.w1}</span>
+              <span class="k">
+                {wk.w1 === 1 ? 'cigarette' : 'cigarettes'} in the last {rng} days
+              </span>
             </div>
             <div class={wk.verdictClass}>{wk.verdict}</div>
-            <div class="k left">{wk.sub}</div>
-          </div>
-
-          <div class="card">
-            <div class="k">Cigarettes per day</div>
             <svg
               class="chart"
               viewBox="0 0 300 130"
@@ -194,35 +159,89 @@ export function Insights() {
               aria-label="Cigarettes per day chart"
               dangerouslySetInnerHTML={{ __html: chartSvg }}
             />
-            <div class="k left">Amber bars went past your limit. The dashed line is your limit.</div>
+            <div class="lgs" aria-hidden="true">
+              <span class="lg"><i />Within limit</span>
+              <span class="lg"><i class="over" />Over limit</span>
+              <span class="lg"><i class="dash" />Your limit</span>
+            </div>
+            <div class="k left">{wk.sub}</div>
           </div>
 
-          <div class="card">
-            <div class="k">Average time between cigarettes</div>
-            <div class="big">{avg != null ? dur(avg) : 'Not enough data yet'}</div>
-            <div class="k left">Last {rng} days, overnight gaps left out</div>
+          <div class="ichips">
+            <div class="stat st3" title={'Last ' + rng + ' days, overnight gaps left out'}>
+              <span class="sti">{ICON.clock}</span>
+              <span>
+                <small>Average gap</small>
+                <b>{avg != null ? dur(avg) : '\u2014'}</b>
+                <em>{avg != null ? 'Overnight left out' : 'Not enough data yet'}</em>
+              </span>
+            </div>
+            <div class="stat st1" title={crv.sub}>
+              <span class="sti">{ICON.shield}</span>
+              <span>
+                <small>Cravings beaten</small>
+                <b>{crv.c1}</b>
+                <em>
+                  {crv.c1 === 0 && crv.c2 === 0
+                    ? 'Log one with the + button'
+                    : crv.c1 > crv.c2
+                      ? crv.c1 - crv.c2 + ' more than before'
+                      : crv.c1 < crv.c2
+                        ? crv.c2 - crv.c1 + ' fewer than before'
+                        : 'Same as before'}
+                </em>
+              </span>
+            </div>
           </div>
 
-          <div class="card">
-            <div class="k">Cravings you got through</div>
-            <div class="big">{crv.text}</div>
-            <div class="k left">{crv.sub}</div>
-          </div>
-
-          {diary.keys.length > 0 && (
-            <div class="card dia" id="dia">
+          {(recap || diary.keys.length > 0) && (
+            <div class="card ws" id="rcc">
               <div class="dh">
-                <span class="bn">Wisp’s diary</span>
-                <small>{diaryLabel(diary.keys[0], now)}</small>
+                <span class="bn">Wisp says</span>
+                <small>{diary.keys.length > 0 ? diaryLabel(diary.keys[0], now) : recap ? recap.range : ''}</small>
               </div>
-              <div id="dt">
-                {(diary.entries[diary.keys[0]] || []).map((line, i) => (
-                  <p key={i}>{line}</p>
-                ))}
-              </div>
+              {diary.keys.length > 0 && (
+                <div class="dia" id="dt">
+                  {(diary.entries[diary.keys[0]] || []).map((line, i) => (
+                    <p key={i}>{line}</p>
+                  ))}
+                </div>
+              )}
+              {recap && (
+                <div class="wsr">
+                  <div class="k lbl">
+                    {(recap.cur ? 'Your week' : 'Last week') + ' \u00b7 ' + recap.range}
+                  </div>
+                  <div class="rch">
+                    <span class="big">{recap.hl.v}</span>
+                    <span class="k">{recap.hl.u}</span>
+                  </div>
+                  <div class="rcs">
+                    {recap.story.map((line, i) => (
+                      <p key={i}>{line}</p>
+                    ))}
+                  </div>
+                  <div class="btnrow">
+                    <button class="btn ter sm" type="button" onClick={shareWeek}>
+                      Share this week
+                    </button>
+                  </div>
+                </div>
+              )}
+              {week && (
+                <details class="wsn" id="wkc">
+                  <summary>{'Last week in numbers \u00b7 ' + week.range}</summary>
+                  <div class="big">{week.tot} cigarettes</div>
+                  <div class="k left" style={{ marginTop: 6, lineHeight: 1.6 }}>
+                    {week.lines.map((line, i) => (
+                      <div key={i}>{line}</div>
+                    ))}
+                  </div>
+                </details>
+              )}
               {diary.keys.length > 1 && (
                 <details id="dp">
-                  <summary>Earlier entries</summary>
+                  <summary>Earlier diary entries</summary>
                   <div id="dl">
                     {diary.keys.slice(1, 8).map((d) => (
                       <p key={d}>
@@ -357,7 +376,7 @@ export function Insights() {
                 {s.pack} a pack, {s.per} to a pack). Enter yours so they are accurate.
               </div>
               <div class="btnrow">
-                <a class="btn ter sm" href="#setup">
+                <a class="btn ter sm" href="#setup/limits">
                   Enter my numbers
                 </a>
               </div>
@@ -370,7 +389,7 @@ export function Insights() {
                 Set your pack price in Settings, then log honestly. This page tracks what you spend, what you save, and
                 your nicotine and tar.
               </div>
-              <a class="btn ter sm u-mt12" href="#setup">
+              <a class="btn ter sm u-mt12" href="#setup/limits">
                 Open settings
               </a>
             </div>

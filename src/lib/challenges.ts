@@ -75,9 +75,9 @@ export function chalStates(c: Challenge, ctx: ChalCtx): DayState[] {
   return o;
 }
 
-/** Star reward for finishing a challenge (legacy endChal). */
+/** Star reward for finishing a challenge. Raised from the legacy 10 / 25 so a challenge clearly beats the daily missions (2 to 4 stars a day). */
 export function chalStarReward(days: number): number {
-  return days >= 7 ? 25 : 10;
+  return days >= 7 ? 50 : 20;
 }
 
 export interface EndChalPatch {

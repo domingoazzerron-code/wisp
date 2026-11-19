@@ -89,11 +89,11 @@ describe('healsToday and yesterdayCount', () => {
 
 describe('wispSubline', () => {
   it('describes the day', () => {
-    expect(wispSubline(0, 10, 0, 10)).toBe('No cigarettes yet today');
-    expect(wispSubline(3, 10, 0, 10)).toBe('3 of 10 today');
-    expect(wispSubline(3, 0, 0, 0)).toBe('3 today');
-    expect(wispSubline(3, 10, 1, 10)).toBe('3 of 10 today · 1 heal');
-    expect(wispSubline(3, 10, 2, 12)).toBe('3 of 10 today · 2 heals · limit lowered to 10');
+    expect(wispSubline(0, 10, 0, 10)).toBe('');
+    expect(wispSubline(3, 10, 0, 10)).toBe('');
+    expect(wispSubline(3, 0, 0, 0)).toBe('');
+    expect(wispSubline(3, 10, 1, 10)).toBe('1 heal');
+    expect(wispSubline(3, 10, 2, 12)).toBe('2 heals · limit lowered to 10');
   });
 });
 

@@ -4,8 +4,9 @@ import { useStore } from '../hooks/useStore.ts';
 import { checkChallenge, startChallenge, stopChallenge } from '../actions/challenge.ts';
 import { liveIndex } from '../lib/current.ts';
 import {
-  CHT, CHK, activeChalView, chalCtx, type ChallengeId,
+  CHT, CHK, activeChalView, chalCtx, chalStarReward, type ChallengeId,
 } from '../lib/challenges.ts';
+import { CardArt } from './CardArt.tsx';
 
 /**
  * Challenge card on Today (legacy #chc).
@@ -30,10 +31,11 @@ export function ChallengeCard({ now }: { now: number }) {
 
   if (active && view) {
     return (
-      <div class="card" id="chc">
+      <div class="card tcard" id="chc">
+        <CardArt kind="challenge" pill={view.dayLabel} />
+        <div class="tbody">
         <div class="dh">
           <span class="bn">Challenge</span>
-          <small>{view.dayLabel}</small>
         </div>
         <div class="mtx">{view.name}</div>
         <div class="cdots" role="img" aria-label={view.okCount + ' of ' + c.days + ' days done'}>
@@ -47,6 +49,7 @@ export function ChallengeCard({ now }: { now: number }) {
             Stop challenge
           </button>
         </div>
+        </div>
       </div>
     );
   }
@@ -58,24 +61,18 @@ export function ChallengeCard({ now }: { now: number }) {
     const T2 = CHT[p[0] as ChallengeId];
     if (T2) {
       resultBlock = r.ok ? (
-        <div class="cres">
-          <b>Badge earned: {T2.n}</b>
-          <span>{p[1]} days done. +{r.s} stars. Wisp is so proud.</span>
-        </div>
+        <div class="clast ok">Last time: {T2.n} badge earned, +{r.s} stars</div>
       ) : (
-        <div class="cres bad">
-          <b>Not this time</b>
-          <span>{T2.n} ended early, and that’s okay. Try it again whenever you like.</span>
-        </div>
+        <div class="clast">Last time: {T2.n} ended early. Try it again whenever you like.</div>
       );
     }
   }
 
   return (
-    <div class="card" id="chc">
+    <div class="card tcard" id="chc">
+      <CardArt kind="challenge" pill="3 or 7 days" />
+      <div class="tbody">
       <div class="dh"><span class="bn">Challenges</span></div>
-      {resultBlock}
-      <div class="k left">Pick a 3 or 7 day goal. Finish it for a badge and stars.</div>
       {open ? (
         <>
           {CHK.map((id) => (
@@ -103,6 +100,9 @@ export function ChallengeCard({ now }: { now: number }) {
           </button>
         </div>
       )}
+      <div class="k left cnote">Finish one for a badge and stars: {chalStarReward(3)} for 3 days, {chalStarReward(7)} for 7.</div>
+      {resultBlock}
+      </div>
     </div>
   );
 }

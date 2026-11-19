@@ -20,7 +20,7 @@
 .drawer:not(.open)>*{transition-delay:0s}
 .drawer .dh{display:flex;justify-content:space-between;align-items:center}
 
-/* ---- sidebar: Wisp menu drawer (uses the app tokens, so light / dark / glass all follow) ---- */
+/* ---- sidebar: Wisp menu drawer (uses the app tokens, so light / dark both follow) ---- */
 #drawer{top:0;bottom:0;right:0;width:min(88%,330px);max-height:none;display:flex;flex-direction:column;gap:0;
 padding:calc(env(safe-area-inset-top,0px) + 16px) 12px calc(env(safe-area-inset-bottom,0px) + 14px);
 background:var(--card);color:var(--ink);border-radius:28px 0 0 28px;box-shadow:var(--sh2);
@@ -36,37 +36,28 @@ transform:translateX(104%);scrollbar-width:none}
 #drawer .sblogo svg{width:20px;height:20px;fill:currentColor;stroke:none}
 #drawer .dclose{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:var(--mute);box-shadow:inset 0 0 0 1.5px var(--line)}
 #drawer .dclose svg{width:17px;height:17px}
-/* nav links */
-#drawer .sbnav{display:flex;flex-direction:column;gap:2px;overflow-y:auto;scrollbar-width:none;min-height:0}
-#drawer a,#drawer .sbgrp{display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;min-height:50px;padding:0 12px;border-radius:14px;
-color:var(--ink);font-size:15.5px;font-weight:500;text-align:left;text-decoration:none;-webkit-tap-highlight-color:transparent;transition:background-color .2s,color .2s}
-#drawer a>svg,#drawer .sbgrp>svg.ic{width:21px;height:21px;flex:none;color:var(--mute);transition:color .2s}
-#drawer a .tl{flex:1;min-width:0}
-#drawer .sbbadge{min-width:28px;height:26px;padding:0 8px;border-radius:13px;display:grid;place-items:center;background:var(--fill);color:var(--mute);font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
-@media (hover:hover){#drawer a:hover,#drawer .sbgrp:hover{background:var(--fill)}}
-#drawer a:active,#drawer .sbgrp:active{background:var(--fill)}
+/* profile card: opens account and style */
+#drawer .sbprofile{display:flex;align-items:center;gap:12px;width:100%;margin:0 0 16px;padding:12px;border-radius:20px;background:var(--fill);text-align:left}
+#drawer .sbav{flex:none;width:48px;height:48px;border-radius:50%;display:grid;place-items:center;font-size:19px;font-weight:700;background:var(--g);color:var(--onG)}
+#drawer .sbprofile .tx{min-width:0;flex:1;display:flex;flex-direction:column}
+#drawer .sbprofile .tl{font-size:16px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#drawer .sbprofile small{font-size:12.5px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#drawer .sbprofile .chev{flex:none;width:18px;height:18px;color:var(--mute)}
+@media (hover:hover){#drawer button.sbprofile:hover{background:color-mix(in srgb,var(--fill) 70%,var(--ink) 6%)}}
+#drawer button.sbprofile:active{background:color-mix(in srgb,var(--fill) 60%,var(--ink) 10%)}
+/* pages that are not in the bottom bar */
+#drawer .sblabel{padding:0 12px 8px;font-size:11.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+#drawer .sbnav{display:flex;flex-direction:column;gap:4px;overflow-y:auto;scrollbar-width:none;min-height:0}
+#drawer .sbnav a{display:flex;flex-direction:row;align-items:center;gap:14px;width:100%;min-height:68px;padding:10px 12px;border-radius:18px;color:var(--ink);text-decoration:none;-webkit-tap-highlight-color:transparent;transition:background-color .2s}
+#drawer .sbnav a .ic{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:var(--gsoft);color:var(--g)}
+#drawer .sbnav a .ic svg{width:22px;height:22px}
+#drawer .sbnav a .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+#drawer .sbnav a .tl{font-size:15.5px;font-weight:600}
+#drawer .sbnav a small{font-size:12.5px;color:var(--mute)}
+@media (hover:hover){#drawer .sbnav a:hover{background:var(--fill)}}
+#drawer .sbnav a:active{background:var(--fill)}
+#drawer .sbnav a[aria-current="page"]{background:var(--gsoft)}
 #drawer a:focus-visible,#drawer button:focus-visible{outline:2px solid var(--g);outline-offset:-2px}
-#drawer a[aria-current="page"]{background:var(--gsoft);color:var(--gt);font-weight:600;box-shadow:none}
-#drawer a[aria-current="page"]>svg{color:var(--g)}
-#drawer a[aria-current="page"] .sbbadge{background:var(--g);color:var(--onG)}
-/* collapsible group */
-#drawer .sbgrp .chev{width:16px;height:16px;flex:none;margin:0 2px 0 3px;color:var(--mute);transition:transform .25s var(--ease)}
-#drawer .sbgrp[aria-expanded="true"] .chev{transform:rotate(90deg)}
-#drawer .sbsub{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s var(--ease)}
-#drawer .sbsub.open{grid-template-rows:1fr}
-#drawer .sbsub>div{overflow:hidden;display:flex;flex-direction:column;gap:2px;padding-left:20px}
-#drawer .sbsub a{min-height:46px;font-size:15px}
-/* bottom area */
 #drawer .sbgap{flex:1;min-height:16px}
-#drawer .sbtheme{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:4px;padding:4px;margin:0 4px 10px;border-radius:18px;box-shadow:inset 0 0 0 1.5px var(--line)}
-#drawer .sbtheme button{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:8px;height:42px;border-radius:14px;color:var(--mute);font-size:14.5px;font-weight:500;transition:background-color .2s,color .2s}
-#drawer .sbtheme button svg{width:18px;height:18px}
-#drawer .sbtheme button[aria-pressed="true"]{background:var(--fill);color:var(--ink);font-weight:600}
-#drawer .sbme{display:flex;align-items:center;gap:12px;padding:8px 4px 0 8px;border-top:1px solid var(--line);margin:0 4px;padding-top:14px}
-#drawer .sbav{flex:none;width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-size:18px;font-weight:700;background:var(--gsoft);color:var(--gt);box-shadow:inset 0 0 0 1.5px var(--line)}
-#drawer .sbme .tx{min-width:0;flex:1;display:flex;flex-direction:column}
-#drawer .sbme .tl{font-size:15px;font-weight:600;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#drawer .sbme small{font-size:12.5px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#drawer .sbdots{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--mute)}
-#drawer .sbdots svg{width:20px;height:20px;fill:currentColor;stroke:none}
-@media (hover:hover){#drawer .sbdots:hover,#drawer .dclose:hover{background:var(--fill)}}
+#drawer .sbfoot{margin:0;padding:14px 12px 0;border-top:1px solid var(--line);font-size:12.5px;line-height:1.45;color:var(--mute)}
+@media (hover:hover){#drawer .dclose:hover{background:var(--fill)}}

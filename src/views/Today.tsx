@@ -1,11 +1,12 @@
 import type { ComponentChildren } from 'preact';
-import { useEffect, useState } from 'preact/hooks';
+import { useEffect, useMemo, useState } from 'preact/hooks';
 import { getState, save } from '../state/index.ts';
 import { useStore, useTick } from '../hooks/useStore.ts';
 import { Wisp } from '../components/Wisp.tsx';
 import { doPoke, getPoke, getWhyTs, setWhyTs } from '../components/pokeState.ts';
 import { Hero } from '../components/Hero.tsx';
-import { CravingCard } from '../components/CravingCard.tsx';
+import { QuickActions } from '../components/QuickActions.tsx';
+import { StatChips } from '../components/StatChips.tsx';
 import { MissionCard } from '../components/MissionCard.tsx';
 import { ChallengeCard } from '../components/ChallengeCard.tsx';
 import { MoreAboutToday } from '../components/MoreAboutToday.tsx';
@@ -18,7 +19,9 @@ import { toast } from '../components/Toasts.tsx';
 import { TAGS } from '../components/Overlay.tsx';
 import { buzz } from '../lib/buzz.ts';
 import { canUndoLast, undoLast } from '../actions/log.ts';
-import { countSince, gapBase, lastTs, lim, liveIndex } from '../lib/current.ts';
+import { calcSaved, countSince, gapBase, lastTs, lim, liveIndex, streak } from '../lib/current.ts';
+import { per } from '../lib/streaks.ts';
+import { flowerCount, sceneForTime, sceneMood, sceneOverride, villageTier } from '../lib/scene.ts';
 import { limFor } from '../lib/limits.ts';
 import { dayAdd, startOfDay } from '../lib/dates.ts';
 import { POKE_SHOW_MS, ambient, hello, needsGreetStamp, pokeLines, whisper, wispCaption } from '../lib/reactions.ts';
@@ -26,8 +29,8 @@ import { greetingPrefix, healsToday, wispLevel, wispSubline, yesterdayCount } fr
 import { MIS } from '../lib/missions.ts';
 
 /**
- * Today view through 6d-3: full Today cards except overlays and nav extras.
- * Still to come: overlays (6d-4), nav extras (6d-5).
+ * Today view: illustrated hero (day / dusk / night scene, greeting, Wisp + speech bubble), stat chips,
+ * the count card, quick actions, nudges, and a row of Today cards (mission, challenge, spacing).
  */
 export function Today() {
   useStore();
@@ -53,6 +56,15 @@ export function Today() {
   const limitYesterday = limFor(s, startOfDay(now) - 864e5);
   const quitActive = !!s.plan.quit && startOfDay(now) >= s.plan.quit;
   const td = startOfDay(now);
+
+  // Hero artwork: lighting from the local clock, weather from how today is going, extras from your progress.
+  const scene = sceneOverride(location.search) || sceneForTime(d.getHours(), d.getMinutes());
+  const mood = sceneMood(t, L);
+  const flowers = flowerCount(streak());
+  const price = per(s);
+  const saved = useMemo(() => calcSaved(), [s.log.length, td, s.base, s.pack, s.per]);
+  const village = villageTier(price > 0 ? saved / price : 0);
+  const calm = !!s.craveEnd && s.craveEnd > now;
 
   // Greeting stamp + outfit attr + evolution check (legacy ambient / applyOutfit / checkEvo).
   useEffect(() => {
@@ -129,26 +141,35 @@ export function Today() {
 
   return (
     <section class="view" id="v-today">
-      <div class="greet">
-        <div id="date">{d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}</div>
-        <div id="gr">{greetingPrefix(d.getHours())}{s.name ? <>, <b>{s.name}</b></> : null}!</div>
-      </div>
       <Wisp
         level={level} count={t} evo={s.evo || 0} caption={caption.text} healed={caption.healed}
         subline={wispSubline(t, L, heals, limitYesterday)} onPoke={onPoke} why={why}
+        scene={scene} mood={mood} flowers={flowers} village={village} calm={calm}
+        date={d.toLocaleDateString(undefined, { weekday: 'long', day: 'numeric', month: 'long' })}
+        greeting={<>{greetingPrefix(d.getHours())}{s.name ? <>, <b>{s.name}</b></> : null}!</>}
+        initial={(s.name || 'W').trim().charAt(0).toUpperCase() || 'W'}
+        onAvatar={() => window.dispatchEvent(new Event('wisp:open-account'))}
       />
-      <MissionCard now={now} onOpenWardrobe={() => setWardrobe(true)} />
       {wardrobe ? <OutfitWardrobe onClose={() => setWardrobe(false)} /> : null}
+      <StatChips
+        now={now} count={t} limit={L} last={last} gapMin={s.gap} gapBase={gapBase()}
+        spent={t * price} saved={saved} cur={s.cur || '₱'}
+      />
       <Hero
         count={t} limit={L} quitActive={quitActive} canUndo={canUndoLast()}
-        last={last} gapMin={s.gap} gapBase={gapBase()} now={now}
+        gapMin={s.gap} gapBase={gapBase()} now={now}
         craving={!!s.craveEnd && s.craveEnd > now} onUndo={undoLast}
         onWait={() => { startCrave(); toast('10 minute wait started'); }}
       />
-      <CravingCard now={now} />
+      <h2 class="sec2">Quick actions</h2>
+      <QuickActions now={now} />
       <TodayNudges now={now} />
-      <ChallengeCard now={now} />
-      <MoreAboutToday now={now} />
+      <h2 class="sec2">Today’s focus</h2>
+      <div class="crow2">
+        <MissionCard now={now} onOpenWardrobe={() => setWardrobe(true)} />
+        <ChallengeCard now={now} />
+        <MoreAboutToday now={now} />
+      </div>
     </section>
   );
 }

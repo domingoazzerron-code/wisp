@@ -56,7 +56,8 @@ for (const raw of cases) {
   const ls = fakeStorage(raw), L = legacy(ls);
   const mine = loadState(fakeStorage(raw));
   const S = L.S();
-  check('loaded state', S, mine);
+  const noDel = (x) => { const c = { ...x }; delete c.del; return c; };
+  check('loaded state', S, noDel(mine));
   // derived helpers on the loaded state
   replaceState(mine);
   check('srt', L.srt(), sortedLog());
@@ -65,7 +66,7 @@ for (const raw of cases) {
   for (const t of [0, 1.7e12, 1.705e12, 1.72e12, 9e12]) check('lb ' + t, L.lb(t), lowerBound(t));
   // saving writes identical JSON
   L.save(); const outLegacy = ls.data.get(STORAGE_KEY);
-  const ms = fakeStorage(); saveState(mine, ms);
+  const ms = fakeStorage(); saveState(noDel(mine), ms);
   check('saved json', outLegacy, ms.data.get(STORAGE_KEY));
 }
 

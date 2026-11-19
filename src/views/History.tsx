@@ -6,6 +6,7 @@ import { dur, money, tm } from '../lib/format.ts';
 import { gapData } from '../lib/gaps.ts';
 import { liveIndex } from '../lib/current.ts';
 import { per } from '../lib/streaks.ts';
+import { limFor } from '../lib/limits.ts';
 import { TAGS, pickTrigger } from '../components/Overlay.tsx';
 import { deleteLogEntry, savePastEntry } from '../actions/log.ts';
 import { deleteCraving } from '../actions/craving.ts';
@@ -48,11 +49,8 @@ function groupByDay(timestamps: number[]): { key: string; items: number[] }[] {
   }));
 }
 
-const EditSvg = () => (
-  <svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM13.5 6.5l4 4" /></svg>
-);
-const TrashSvg = () => (
-  <svg viewBox="0 0 24 24"><path d="M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3" /></svg>
+const ChevSvg = () => (
+  <svg class="rchev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
 );
 
 /**
@@ -70,6 +68,15 @@ export function History() {
   const [mood, setMood] = useState('');
   const [note, setNote] = useState('');
   const segRef = useRef<HTMLDivElement>(null);
+  // One tap on a row opens this sheet (trigger / edit / delete) instead of three buttons on every row.
+  const [sheet, setSheet] = useState<{ ts: number; kind: 'cig' | 'crav' } | null>(null);
+
+  useEffect(() => {
+    if (!sheet) return;
+    const on = (e: KeyboardEvent) => { if (e.key === 'Escape') setSheet(null); };
+    window.addEventListener('keydown', on);
+    return () => window.removeEventListener('keydown', on);
+  }, [sheet]);
 
   // Nav "Add a past entry" dispatches this.
   useEffect(() => {
@@ -191,58 +198,46 @@ export function History() {
                 const sd = startOfDay(items[0]);
                 let gv = gd.m[sd] || 0;
                 if (sd === startOfDay(now)) gv = Math.max(gv, gd.cur);
+                const dl = limFor(s, sd);
+                const n = items.length;
+                const cur = s.cur || '\u20b1';
                 return (
                   <div key={key}>
                     <div class="day">
-                      {dayLabel(key, items[0], now)}
-                      <span>
-                        {items.length} sticks, {money(s.cur, items.length * price)}
+                      <div class="dl">
+                        <b>{dayLabel(key, items[0], now)}</b>
+                        <span class="dm">
+                          {money(cur, n * price)}
+                          {gv >= 6e4 ? ' \u00b7 Best gap ' + dur(gv) : ''}
+                        </span>
+                      </div>
+                      <span class={'dc' + (dl > 0 ? (n > dl ? ' over' : ' ok') : '')}>
+                        {dl > 0 ? n + ' of ' + dl : n + (n === 1 ? ' stick' : ' sticks')}
                       </span>
-                      {gv >= 6e4 && <span class="g">Best gap {dur(gv)}</span>}
                     </div>
                     <div class="card list">
-                      {items.map((ts) => {
+                      {items.map((ts, i) => {
                         const tag = s.tags[ts];
                         const nn = s.notes[ts];
+                        const prev = items[i + 1];
+                        const gapTxt = prev ? dur(ts - prev) + ' after the previous' : 'First of the day';
+                        const extra = nn && (nn.m || nn.n) ? [nn.m, nn.n].filter(Boolean).join(' ') : '';
                         return (
-                          <div class="row" key={ts}>
-                            <span>
-                              {tm(ts)}
-                              {nn && (nn.m || nn.n) ? (
-                                <>
-                                  <br />
-                                  <span class="k">{[nn.m, nn.n].filter(Boolean).join(' ')}</span>
-                                </>
-                              ) : null}
+                          <button
+                            type="button"
+                            class="rowb"
+                            key={ts}
+                            aria-haspopup="dialog"
+                            aria-label={'Entry at ' + tm(ts) + (tag ? ', ' + tag : '') + '. Open options'}
+                            onClick={() => setSheet({ ts, kind: 'cig' })}
+                          >
+                            <span class="rt">
+                              <b>{tm(ts)}</b>
+                              <span class="k">{gapTxt}{extra ? ' \u00b7 ' + extra : ''}</span>
                             </span>
-                            <span class="acts">
-                              <button
-                                type="button"
-                                class={'tagbtn' + (tag ? ' on' : '')}
-                                aria-label="Set trigger"
-                                onClick={() => pickTrigger(ts)}
-                              >
-                                {tag || '+ Trigger'}
-                              </button>
-                              <button
-                                type="button"
-                                class="del ib"
-                                aria-label="Edit entry"
-                                title="Edit"
-                                onClick={() => startEdit(ts)}
-                              >
-                                <EditSvg />
-                              </button>
-                              <button
-                                type="button"
-                                class="del ib"
-                                aria-label={'Delete entry at ' + tm(ts)}
-                                onClick={() => deleteLogEntry(ts)}
-                              >
-                                <TrashSvg />
-                              </button>
-                            </span>
-                          </div>
+                            {tag ? <span class="rtag">{tag}</span> : null}
+                            <ChevSvg />
+                          </button>
                         );
                       })}
                     </div>
@@ -276,35 +271,31 @@ export function History() {
               {cravDays.slice(0, page).map(({ key, items }) => (
                 <div key={key}>
                   <div class="day">
-                    {dayLabel(key, items[0], now)}
-                    <span>
+                    <div class="dl">
+                      <b>{dayLabel(key, items[0], now)}</b>
+                    </div>
+                    <span class="dc ok">
                       {items.length} {items.length === 1 ? 'craving' : 'cravings'}
                     </span>
                   </div>
                   <div class="card list">
-                    {items.map((ts) => (
-                      <div class="row" key={ts}>
-                        <span>{tm(ts)}</span>
-                        <span class="acts">
-                          <button
-                            type="button"
-                            class={'tagbtn' + (s.crt[ts] ? ' on' : '')}
-                            aria-label={'Set trigger for the craving at ' + tm(ts)}
-                            onClick={() => pickTrigger(ts, 'crt')}
-                          >
-                            {s.crt[ts] || '+ Trigger'}
-                          </button>
-                          <button
-                            type="button"
-                            class="del ib"
-                            aria-label={'Delete craving at ' + tm(ts)}
-                            onClick={() => deleteCraving(ts)}
-                          >
-                            <TrashSvg />
-                          </button>
-                        </span>
-                      </div>
-                    ))}
+                    {items.map((ts) => {
+                      const tag = s.crt[ts];
+                      return (
+                        <button
+                          type="button"
+                          class="rowb"
+                          key={ts}
+                          aria-haspopup="dialog"
+                          aria-label={'Craving at ' + tm(ts) + (tag ? ', ' + tag : '') + '. Open options'}
+                          onClick={() => setSheet({ ts, kind: 'crav' })}
+                        >
+                          <span class="rt"><b>{tm(ts)}</b></span>
+                          {tag ? <span class="rtag">{tag}</span> : null}
+                          <ChevSvg />
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -322,6 +313,33 @@ export function History() {
           )}
         </div>
       )}
+      {sheet && (() => {
+        const isCig = sheet.kind === 'cig';
+        const tag = isCig ? s.tags[sheet.ts] : s.crt[sheet.ts];
+        const close = () => setSheet(null);
+        return (
+          <div class="ov" onClick={(e) => { if (e.target === e.currentTarget) close(); }}>
+            <div class="box" role="dialog" aria-modal="true" aria-label={(isCig ? 'Entry' : 'Craving') + ' at ' + tm(sheet.ts)}>
+              <h3>{tm(sheet.ts)}</h3>
+              <p>{dayLabel(dayKey(sheet.ts), sheet.ts, now)}{tag ? ' \u00b7 ' + tag : ''}</p>
+              <div class="sheetbtns">
+                <button class="btn ter blk" type="button" onClick={() => { const t = sheet.ts; close(); pickTrigger(t, isCig ? 'tags' : 'crt'); }}>
+                  {tag ? 'Change trigger' : 'Set trigger'}
+                </button>
+                {isCig && (
+                  <button class="btn sec blk" type="button" onClick={() => { const t = sheet.ts; close(); startEdit(t); }}>
+                    Edit time or note
+                  </button>
+                )}
+                <button class="btn dng blk" type="button" onClick={() => { const t = sheet.ts; close(); if (isCig) deleteLogEntry(t); else deleteCraving(t); }}>
+                  Delete
+                </button>
+                <button class="btn txt blk" type="button" onClick={close}>Cancel</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </section>
   );
 }

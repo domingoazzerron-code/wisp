@@ -34,9 +34,18 @@ export function Summary() {
 
   useEffect(() => {
     if (!open || !canvasRef.current) return;
-    const st = shareStats(s, liveIndex, Date.now(), lim());
-    drawShareCard(canvasRef.current, kind, st, s.name || '');
-    canvasRef.current.toBlob((b) => setBlob(b), 'image/png');
+    const cv = canvasRef.current;
+    let dead = false;
+    const draw = () => {
+      if (dead) return;
+      const st = shareStats(s, liveIndex, Date.now(), lim());
+      drawShareCard(cv, kind, st, s.name || '');
+      cv.toBlob((b) => { if (!dead) setBlob(b); }, 'image/png');
+    };
+    // The card uses DM Sans: load it first so the canvas does not fall back to a system font.
+    if (document.fonts && document.fonts.load) document.fonts.load('700 100px "DM Sans"').then(draw, draw);
+    else draw();
+    return () => { dead = true; };
   }, [open, kind, s.log.length, s.waited, s.base, s.pack, s.per, s.cur, s.name, s.evo]);
 
   function openShare() {

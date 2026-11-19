@@ -306,7 +306,7 @@ export function Plan() {
                 <div
                   id="fwm"
                   ref={fwmRef}
-                  style={{ '--s': '5' } as any}
+                  style={{ '--s': '0' } as any}
                   data-stage={5}
                   dangerouslySetInnerHTML={{ __html: GHOST_SVG }}
                 />

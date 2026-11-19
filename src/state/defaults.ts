@@ -7,7 +7,7 @@ export function defaultState(): State {
     goal: { name: '', amt: 0 }, notes: {}, ctags: [], theme: 'auto', outfit: 'none',
     waited: 0, craveEnd: 0, gap: 0, gapWarn: 1, qh: 0, conf: 0, rsDay: 0, crt: {},
     reasons: '', mile: {}, lastBackup: 0, bkSnooze: 0, name: '', heals: [], healAt: 0,
-    diary: {}, hap: 1, gapFrom: 0, evo: 0, cel: null, celDay: 0, log: [], setup: 0,
+    diary: {}, hap: 1, gapFrom: 0, evo: 0, cel: null, celDay: 0, log: [], del: [], setup: 0,
     fx: 0, rng: 7, wkSeen: 0, cravs: [], tags: {}, stars: 0, earned: 0, owned: [],
     mis: { day: 0, id: '', p: 0, t: 0, done: 0, sw: 0, man: 0, b: 0 }, misN: 0, mlog: [],
     chal: { id: '', days: 0, start: 0, grace: 0 }, cres: null, badges: {},

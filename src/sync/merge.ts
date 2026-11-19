@@ -27,5 +27,13 @@ export function mergeStates(local: Rec, cloud: Rec, localNewer: boolean): Rec {
     o[q] = Object.assign({}, a || {}, b || {});
   });
   o.waited = Math.max(+cloud.waited || 0, +local.waited || 0);
+  // Entries deleted (or re-timed) on either device stay deleted. Only touched when a copy has a `del` list.
+  if (Array.isArray(cloud.del) || Array.isArray(local.del)) {
+    o.del = unionNumbers(cloud.del, local.del).slice(-500);
+    const gone: Record<number, 1> = {};
+    o.del.forEach((x: number) => { gone[x] = 1; });
+    o.log = o.log.filter((x: number) => !gone[x]);
+    ['tags', 'notes'].forEach((q) => { for (const k of Object.keys(o[q] || {})) if (gone[+k]) delete o[q][k]; });
+  }
   return o;
 }

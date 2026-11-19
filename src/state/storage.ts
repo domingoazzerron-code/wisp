@@ -66,6 +66,8 @@ export function sanitize(state: State): State {
   if (!Array.isArray(o.mlog)) o.mlog = [];
   o.mlog = o.mlog.filter((x: unknown) => typeof x === 'number' && isFinite(x)).slice(-400);
   if (o.cres && (typeof o.cres !== 'object' || Array.isArray(o.cres))) o.cres = null;
+  if (!Array.isArray(o.del)) o.del = [];
+  o.del = o.del.filter((x: unknown) => typeof x === 'number' && isFinite(x) && x > 0).slice(-500);
   o.stars = Math.floor(o.stars);
   return state;
 }
@@ -107,9 +109,10 @@ export function loadState(storage: KeyValueStorage | null = browserStorage()): S
   return stateFromObject(p);
 }
 
-/** Writes the state. Ignores storage errors (private mode, quota), like the legacy app. */
-export function saveState(state: State, storage: KeyValueStorage | null = browserStorage()): void {
-  try { storage?.setItem(STORAGE_KEY, JSON.stringify(state)); } catch { /* ignore */ }
+/** Writes the state. Returns false when it could not be written (private mode, quota, blocked storage). */
+export function saveState(state: State, storage: KeyValueStorage | null = browserStorage()): boolean {
+  if (!storage) return false;
+  try { storage.setItem(STORAGE_KEY, JSON.stringify(state)); return true; } catch { return false; }
 }
 
 /**

@@ -64,6 +64,7 @@ export interface State {
   cel: Celebration | null;
   celDay: number;
   log: number[];                 // every logged cigarette (timestamps)
+  del: number[];                 // timestamps of entries deleted or re-timed, so cloud sync does not bring them back
   setup: number;
   fx: 0 | 1 | 2 | 3;
   rng: 7 | 30 | 90;

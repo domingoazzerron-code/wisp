@@ -1,4 +1,4 @@
-import { addEntry, getState, removeEntry, restoreEntry, save } from '../state/index.ts';
+import { addEntry, forget, getState, removeEntry, restoreEntry, save, unforget } from '../state/index.ts';
 import { setWhyTs } from '../components/pokeState.ts';
 import { toast } from '../components/Toasts.tsx';
 import { alertBox, slipPrompt } from '../components/Overlay.tsx';
@@ -15,6 +15,12 @@ import { askConfirmDual } from '../components/Overlay.tsx';
  */
 export function logCigarette(): void {
   const t0 = Date.now();
+  // Ignore an accidental double tap: a second entry within 2 seconds is never intended.
+  const prev = lastTs();
+  if (prev && t0 - prev >= 0 && t0 - prev < 2000) {
+    toast('Already logged a moment ago');
+    return;
+  }
   const cel = logCelebration(gapData(liveIndex, t0), lastTs(), t0);
   if (cel) getState().cel = cel;
   const now = addEntry(t0);
@@ -106,16 +112,21 @@ export function savePastEntry(
   if (editTs) {
     const i = s.log.indexOf(editTs);
     if (i > -1) {
+      if (editTs !== when) forget(s, editTs);
       s.log[i] = when;
       if (s.tags[editTs]) {
         s.tags[when] = s.tags[editTs];
         delete s.tags[editTs];
       }
+    } else if (s.log.indexOf(when) < 0) {
+      // The entry being edited is gone (deleted or changed on another device): save it as a new one instead of losing it.
+      s.log.push(when);
     }
     delete s.notes[editTs];
   } else {
     s.log.push(when);
   }
+  unforget(s, when);
   const nv: { m?: string; n?: string } = {};
   if (mood) nv.m = mood;
   if (note.trim()) nv.n = note.trim();

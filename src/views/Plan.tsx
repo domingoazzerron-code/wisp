@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { getState } from '../state/index.ts';
 import { useStore, useTick } from '../hooks/useStore.ts';
 import { dayAdd, startOfDay } from '../lib/dates.ts';
@@ -63,10 +63,11 @@ function MileRow(props: { on: boolean; title: string; body: string; right?: stri
 export function Plan() {
   const fwmRef = useRef<HTMLDivElement>(null);
   useStore();
-  useTick(1000);
   const s = getState();
   const now = Date.now();
   const [tab, setTab] = useState<Tab>('progress');
+  // Only the Progress tab shows a live timer, so only tick there.
+  useTick(tab === 'progress' ? 1000 : 0);
 
   // Future form: fully evolved Wisp (legacy renderFuture uses evSet(fm, 5)).
   // Re-run on tab change: the card unmounts when you leave Progress, so the freshly
@@ -103,12 +104,16 @@ export function Plan() {
   const first = sorted.length ? startOfDay(sorted[0]) : 0;
 
   // Smoke-free stretch
-  let bestGap = 0;
-  for (let i = 1; i < sorted.length; i++) {
-    if (sorted[i] - sorted[i - 1] > bestGap) bestGap = sorted[i] - sorted[i - 1];
-  }
+  // `sorted` keeps its identity until the log changes, so the full scan runs once per save, not once per second.
+  const pastBestGap = useMemo(() => {
+    let b = 0;
+    for (let i = 1; i < sorted.length; i++) {
+      if (sorted[i] - sorted[i - 1] > b) b = sorted[i] - sorted[i - 1];
+    }
+    return b;
+  }, [sorted]);
   const curGap = sorted.length ? now - sorted[sorted.length - 1] : 0;
-  if (curGap > bestGap) bestGap = curGap;
+  const bestGap = Math.max(pastBestGap, curGap);
 
   // Quit plan summary
   let curStep = -1;
@@ -236,7 +241,11 @@ export function Plan() {
     }
   }
   let fwn = '';
-  if (e.avg === null) fwn = 'Wisp can evolve after a full week of tracking. Now: ' + FORM[es] + '.';
+  if (e.avg === null) {
+    fwn = s.base > 0
+      ? 'Wisp can evolve after a full week of tracking. Now: ' + FORM[es] + '.'
+      : 'Set your usual cigarettes a day in Setup so Wisp can start evolving. Now: ' + FORM[es] + '.';
+  }
   else if (es >= 5) fwn = 'Now: ' + FORM[es] + '. Fully evolved.';
   else {
     fwn =

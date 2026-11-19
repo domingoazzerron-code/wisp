@@ -47,6 +47,7 @@ export function OutfitWardrobe({ onClose }: { onClose: () => void }) {
               key={id}
               type="button"
               class={'otb' + (id === current ? ' on' : '') + (locked ? ' lk' : '')}
+              data-o={id}
               aria-pressed={id === current}
               aria-label={OUTFIT_NAME[id] + (locked ? ', ' + pr + ' stars' + (min != null ? ', or reach ' + FORM[min] : '') : '')}
               onClick={() => pick(id)}

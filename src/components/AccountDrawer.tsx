@@ -254,6 +254,7 @@ export function AccountDrawer({
                 key={id}
                 type="button"
                 class={'otb' + (id === current ? ' on' : '') + (locked ? ' lk' : '')}
+                data-o={id}
                 aria-pressed={id === current}
                 aria-label={
                   OUTFIT_NAME[id] +

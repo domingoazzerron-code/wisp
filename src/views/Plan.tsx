@@ -62,20 +62,22 @@ function MileRow(props: { on: boolean; title: string; body: string; right?: stri
  */
 export function Plan() {
   const fwmRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const root = fwmRef.current;
-    if (!root) return;
-    // Future form: fully evolved Wisp (legacy renderFuture uses evSet(fm, 5)).
-    root.querySelectorAll('.ev').forEach((el) => {
-      const need = +((el as HTMLElement).getAttribute('data-ev') || 0);
-      (el as HTMLElement).style.opacity = need <= 5 ? '1' : '0';
-    });
-  }, []);
   useStore();
   useTick(1000);
   const s = getState();
   const now = Date.now();
   const [tab, setTab] = useState<Tab>('progress');
+
+  // Future form: fully evolved Wisp (legacy renderFuture uses evSet(fm, 5)).
+  // Re-run on tab change: the card unmounts when you leave Progress, so the freshly
+  // rendered SVG would otherwise come back with every evolution piece at opacity 0.
+  useEffect(() => {
+    const root = fwmRef.current;
+    if (!root) return;
+    root.querySelectorAll('.ev').forEach((el) => {
+      (el as HTMLElement).style.opacity = '1';
+    });
+  }, [tab]);
   const segRef = useRef<HTMLDivElement>(null);
 
   useLayoutEffect(() => {
@@ -304,7 +306,7 @@ export function Plan() {
                 <div
                   id="fwm"
                   ref={fwmRef}
-                  style={{ '--s': '0' } as any}
+                  style={{ '--s': '5' } as any}
                   data-stage={5}
                   dangerouslySetInnerHTML={{ __html: GHOST_SVG }}
                 />

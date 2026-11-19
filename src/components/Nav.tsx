@@ -10,10 +10,38 @@ const ICON = {
   history: <path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01" />,
   insights: <path d="M5 20V12M12 20V5M19 20v-5" />,
   plan: <path d="M5 21V4M5 4h11l-2 4 2 4H5" />,
+  add: <><circle cx="12" cy="12" r="9" /><path d="M12 8v8M8 12h8" /></>,
 };
+
+const SLOTS = ['today', 'history', 'add', 'insights', 'plan'] as const;
+const PAD = 8; // matches .bar horizontal padding
+const H = 60; // pill height (--nb)
+const ORB = 52; // bubble diameter (--ps)
+const ORB_CY = 3; // bubble centre, measured from the pill's top edge
+
+/** Pill outline with a smooth scoop under the bubble at x = cx (null = plain pill). */
+function glassPath(W: number, cx: number | null): string {
+  const r = H / 2;
+  if (cx == null) return `M${r} 0H${W - r}A${r} ${r} 0 0 1 ${W - r} ${H}H${r}A${r} ${r} 0 0 1 ${r} 0Z`;
+  const A = 50, D = 37, S = 22;
+  const arcY = (x: number) => r - Math.sqrt(Math.max(0, r * r - (r - x) * (r - x)));
+  let xl = cx - A, yl = 0, xr = cx + A, yr = 0;
+  if (xl < r) { xl = Math.max(xl, 9); yl = arcY(xl); }
+  if (xr > W - r) { xr = Math.min(xr, W - 9); yr = arcY(W - xr); }
+  const f = (n: number) => n.toFixed(2);
+  const k = 0.42;
+  let d = `M${f(xl)} ${f(yl)}`;
+  d += `C${f(xl + (cx - xl) * k)} ${f(yl)} ${f(cx - S)} ${D} ${f(cx)} ${D}`;
+  d += `C${f(cx + S)} ${D} ${f(xr - (xr - cx) * k)} ${f(yr)} ${f(xr)} ${f(yr)}`;
+  d += xr > W - r ? `A${r} ${r} 0 0 1 ${W - r} ${H}` : `H${W - r}A${r} ${r} 0 0 1 ${W - r} ${H}`;
+  d += `H${r}`;
+  d += xl < r ? `A${r} ${r} 0 0 1 ${f(xl)} ${f(yl)}Z` : `A${r} ${r} 0 0 1 ${r} 0H${f(xl)}Z`;
+  return d;
+}
+
 const LABEL = { today: 'Today', history: 'History', insights: 'Insights', plan: 'Plan' };
 
-function Tab({ view, current }: { view: keyof typeof ICON; current: string }) {
+function Tab({ view, current }: { view: keyof typeof LABEL; current: string }) {
   return (
     <a href={'#' + view} data-v={view} aria-current={current === view ? 'page' : undefined}>
       <svg viewBox="0 0 24 24">{ICON[view]}</svg>
@@ -23,58 +51,90 @@ function Tab({ view, current }: { view: keyof typeof ICON; current: string }) {
 }
 
 /**
- * Bottom bar: tabs, + button with long-press quick menu, sliding .dot indicator.
+ * Floating glass bar: tabs and a + button (long-press quick menu). The active tab lifts out of the pill as a bubble.
  */
 export function Nav({ current }: { current: string }) {
   const barRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLElement>(null);
+  const glassRef = useRef<HTMLDivElement>(null);
+  const orbRef = useRef<HTMLDivElement>(null);
   const addRef = useRef<HTMLButtonElement>(null);
   const [qmOpen, setQmOpen] = useState(false);
   const [tip, setTip] = useState(false);
   const lpFired = useRef(false);
   const lpT = useRef(0);
   const tipT = useRef(0);
-  const dotReady = useRef(false);
-  const dotShown = useRef(false);
 
-  // Sliding dot under the current tab (legacy placeDot).
+  // Glass pill: the scoop and the bubble glide to the current tab together.
+  const idx = (SLOTS as readonly string[]).indexOf(current);
+  const widthRef = useRef(0);
+  const xRef = useRef<number | null>(null);
+  const rafRef = useRef(0);
+  const vRef = useRef(0);
+  const tgtRef = useRef(0);
+  const lastRef = useRef(0);
+
+  const draw = (x: number | null) => {
+    const W = widthRef.current;
+    const d = glassPath(W, x);
+    const gf = glassRef.current;
+    if (gf) gf.style.clipPath = `path('${d}')`;
+    barRef.current?.querySelectorAll('.gsh path, .gs path').forEach((p) => p.setAttribute('d', d));
+    const o = orbRef.current;
+    if (o) {
+      o.style.opacity = x == null ? '0' : '1';
+      if (x != null) {
+        const q = Math.min(0.14, Math.abs(vRef.current) / 5000); // stretch while moving
+        o.style.transform = `translate(${x - ORB / 2}px,${ORB_CY - ORB / 2}px) scale(${1 + q},${1 - q * 0.8})`;
+      }
+    }
+    xRef.current = x;
+  };
+
+  const centreOf = (i: number) => PAD + ((widthRef.current - PAD * 2) / 5) * (i + 0.5);
+
   useLayoutEffect(() => {
-    const d = dotRef.current;
     const bar = barRef.current;
-    if (!d || !bar) return;
-    const a = bar.querySelector('a[aria-current="page"]') as HTMLElement | null;
-    if (!a) {
-      d.style.opacity = '0';
-      dotShown.current = false;
-      return;
-    }
-    const jump = !dotReady.current || !dotShown.current;
-    if (jump) d.style.transition = 'none';
-    d.style.transform = 'translateX(' + a.offsetLeft + 'px)';
-    d.style.width = a.offsetWidth + 'px';
-    d.style.opacity = '1';
-    if (jump) {
-      void d.offsetWidth;
-      d.style.transition = '';
-      dotReady.current = true;
-    }
-    dotShown.current = true;
-  }, [current]);
-
-  useEffect(() => {
-    const onResize = () => {
-      const d = dotRef.current;
-      const bar = barRef.current;
-      if (!d || !bar) return;
-      const a = bar.querySelector('a[aria-current="page"]') as HTMLElement | null;
-      if (!a) return;
-      d.style.transform = 'translateX(' + a.offsetLeft + 'px)';
-      d.style.width = a.offsetWidth + 'px';
-      d.style.opacity = '1';
+    if (!bar) return;
+    const measure = () => {
+      widthRef.current = bar.offsetWidth;
+      const svgs = bar.querySelectorAll('svg.gsh, svg.gs');
+      svgs?.forEach((v) => v.setAttribute('viewBox', `0 0 ${widthRef.current} ${H}`));
+      tgtRef.current = idx >= 0 ? centreOf(idx) : 0;
+      vRef.current = 0;
+      draw(idx >= 0 ? tgtRef.current : null);
     };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(bar);
+    return () => ro.disconnect();
   }, []);
+
+  // Damped spring: interruptible and frame-rate independent.
+  const step = (now: number) => {
+    const to = tgtRef.current;
+    const dt = Math.min(0.032, (now - lastRef.current) / 1000 || 0.016);
+    lastRef.current = now;
+    const x = xRef.current ?? to;
+    const K = 300, C = 2 * 0.74 * Math.sqrt(K);
+    vRef.current += (-K * (x - to) - C * vRef.current) * dt;
+    const nx = x + vRef.current * dt;
+    if (Math.abs(nx - to) < 0.04 && Math.abs(vRef.current) < 0.6) { vRef.current = 0; draw(to); return; }
+    draw(nx);
+    rafRef.current = requestAnimationFrame(step);
+  };
+
+  useLayoutEffect(() => {
+    const stop = () => cancelAnimationFrame(rafRef.current);
+    stop();
+    if (!widthRef.current) return stop;
+    if (idx < 0) { draw(null); return stop; }
+    tgtRef.current = centreOf(idx);
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (xRef.current == null || reduce) { vRef.current = 0; draw(tgtRef.current); return stop; }
+    lastRef.current = performance.now();
+    rafRef.current = requestAnimationFrame(step);
+    return stop;
+  }, [current]);
 
   // One-time tip: hold + for quick actions (legacy qhShow).
   useEffect(() => {
@@ -151,7 +211,21 @@ export function Nav({ current }: { current: string }) {
       />
       <nav aria-label="Main">
         <div class="bar" ref={barRef}>
-          <div class="bgw"><i /></div>
+          <svg class="gsh" aria-hidden="true"><path class="a" /><path class="b" /><path class="c" /><path class="d" /><path class="e" /></svg>
+          <div class="gf" ref={glassRef} aria-hidden="true" />
+          <svg class="gs" aria-hidden="true">
+            <defs>
+              <linearGradient id="gstroke" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" class="s1" />
+                <stop offset="1" class="s2" />
+              </linearGradient>
+            </defs>
+            <path stroke="url(#gstroke)" />
+          </svg>
+          <i class="hb" aria-hidden="true" />
+          <div class="orb" ref={orbRef} aria-hidden="true">
+            <svg viewBox="0 0 24 24" key={current}>{(ICON as any)[current]}</svg>
+          </div>
           <Tab view="today" current={current} />
           <Tab view="history" current={current} />
           <button
@@ -167,11 +241,10 @@ export function Nav({ current }: { current: string }) {
             onPointerLeave={clearLp}
             onContextMenu={(e) => e.preventDefault()}
           >
-            <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
+            <svg viewBox="0 0 24 24">{ICON.add}</svg>
           </button>
           <Tab view="insights" current={current} />
           <Tab view="plan" current={current} />
-          <i class="dot" id="dot" ref={dotRef as any} />
         </div>
 
         {tip ? (

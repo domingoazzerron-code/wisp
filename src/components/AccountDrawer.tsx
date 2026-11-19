@@ -35,7 +35,6 @@ const THEMES: { id: Theme; label: string }[] = [
   { id: 'auto', label: 'Auto' },
   { id: 'light', label: 'Light' },
   { id: 'dark', label: 'Dark' },
-  { id: 'glass', label: 'Glass' },
 ];
 
 const FX: { id: FxLevel; label: string }[] = [

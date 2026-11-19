@@ -1,10 +1,8 @@
 import { useState } from 'preact/hooks';
-import { getState, save } from '../state/index.ts';
+import { getState } from '../state/index.ts';
 import { useStore } from '../hooks/useStore.ts';
 import { getSyncUser } from '../sync/index.ts';
 import { countSince } from '../lib/current.ts';
-import { applyTheme } from '../lib/theme.ts';
-import type { Theme } from '../lib/theme.ts';
 import type { ComponentChildren } from 'preact';
 
 type LinkDef = { view: string; label: string; icon: ComponentChildren };
@@ -34,7 +32,7 @@ function NavLink({ l, current, onClose, badge }: { l: LinkDef; current: string; 
 
 /**
  * Menu drawer: brand row, route links (with a collapsible "More" group), Light/Dark switch and the account row.
- * Colours come from the app tokens, so it follows light, dark and glass automatically.
+ * Colours come from the app tokens, so it follows light and dark automatically.
  */
 export function MenuDrawer({
   open,
@@ -53,15 +51,8 @@ export function MenuDrawer({
   const inMore = MORE.some((l) => l.view === current);
   const [moreOpen, setMoreOpen] = useState(true);
   const showMore = moreOpen || inMore;
-  const dark = typeof document !== 'undefined' && document.documentElement.getAttribute('data-theme') !== 'light';
   const name = s.name || 'Account';
   const sub = user && user.email ? user.email : 'Style & preferences';
-
-  function setTheme(t: Theme) {
-    getState().theme = t;
-    save();
-    applyTheme(t);
-  }
 
   return (
     <aside class={'drawer' + (open ? ' open' : '')} id="drawer" aria-hidden={!open} aria-label="Menu">
@@ -96,17 +87,6 @@ export function MenuDrawer({
       </div>
 
       <div class="sbgap" />
-
-      <div class="sbtheme" role="group" aria-label="Appearance">
-        <button type="button" aria-pressed={!dark} onClick={() => setTheme('light')}>
-          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" /></svg>
-          Light
-        </button>
-        <button type="button" aria-pressed={dark} onClick={() => setTheme('dark')}>
-          <svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" /></svg>
-          Dark
-        </button>
-      </div>
 
       <div class="sbme">
         <span class="sbav" id="dpav" aria-hidden="true">{(name[0] || 'W').toUpperCase()}</span>

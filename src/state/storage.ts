@@ -50,7 +50,8 @@ export function sanitize(state: State): State {
     'stars', 'earned', 'misN', 'greetDay', 'greetAt', 'recapSeen',
   ].forEach((q) => { if (typeof o[q] !== 'number' || !isFinite(o[q]) || o[q] < 0) o[q] = d[q]; });
   ['cur', 'name', 'reasons'].forEach((q) => { if (typeof o[q] !== 'string') o[q] = d[q]; });
-  if (['auto', 'light', 'dark', 'glass'].indexOf(o.theme) < 0) o.theme = 'auto';
+  if (o.theme === 'glass') o.theme = 'dark'; // the Glass theme was removed; it was a dark look
+  if (['auto', 'light', 'dark'].indexOf(o.theme) < 0) o.theme = 'auto';
   if (OUTFITS.indexOf(o.outfit) < 0) o.outfit = 'none';
   ['mis', 'chal', 'badges'].forEach((q) => { if (!isObj(o[q])) o[q] = d[q]; });
   for (k in d.mis) if (typeof o.mis[k] !== typeof d.mis[k]) o.mis[k] = d.mis[k];

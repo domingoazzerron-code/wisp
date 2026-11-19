@@ -1,7 +1,7 @@
 // Shape of the saved app state (what lives in localStorage under STORAGE_KEY).
 // Ported from legacy def() (legacy/index.html ~line 1026). Timestamps are ms since epoch.
 
-export type Theme = 'auto' | 'light' | 'dark' | 'glass';
+export type Theme = 'auto' | 'light' | 'dark';
 
 export type Outfit =
   | 'none' | 'beanie' | 'party' | 'wizard' | 'shades' | 'scarf' | 'bow'

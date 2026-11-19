@@ -33,7 +33,7 @@ function randState() {
   s.mlog = Array.from({ length: Math.floor(rnd() * 12) }, ts);
   for (const k of ['tags', 'notes', 'crt']) for (const t of s.log.slice(0, 4)) if (rnd() < 0.6) s[k][t] = pick(['a', 'b', 'c']);
   s.mile = { m1: ts(), m2: ts() }; s.badges = rnd() < 0.5 ? { b1: ts() } : {}; s.diary = rnd() < 0.5 ? { [ts()]: 'x' } : {};
-  s.waited = pick([0, 5, 20, 100]); s.limit = pick([5, 8, 10]); s.theme = pick(['auto', 'dark', 'glass']); s.name = pick(['', 'Ana', 'Bo']);
+  s.waited = pick([0, 5, 20, 100]); s.limit = pick([5, 8, 10]); s.theme = pick(['auto', 'dark', 'light']); s.name = pick(['', 'Ana', 'Bo']);
   s.setup = pick([0, 1]);
   if (rnd() < 0.3) s.log = s.log.concat(s.log.slice(0, 3)); // duplicates
   return sanitize(s);

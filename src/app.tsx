@@ -61,6 +61,13 @@ export function App() {
     return () => mq?.removeEventListener?.('change', onScheme);
   }, []);
 
+  // The Today hero's avatar asks for the account drawer.
+  useEffect(() => {
+    const on = () => { setMenuOpen(false); setAccountOpen(true); };
+    window.addEventListener('wisp:open-account', on);
+    return () => window.removeEventListener('wisp:open-account', on);
+  }, []);
+
   // Close menu on route change (legacy route() closes the drawer).
   useEffect(() => { setMenuOpen(false); }, [view]);
 

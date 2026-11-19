@@ -1,0 +1,131 @@
+/* ===== Today hero artwork: day / dusk / night, driven by [data-scene] on .scn ===== */
+.scn{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none;
+--m1:#8CC9A4;--m2:#5DB37A;--m3:#3F9A62;--fg:#2F8453;--snow:#F2FAFF;--cloud:#FFFFFF;--water:#7CC7F2;--refl:#FFF3B0;--smoke:#FFFFFF;
+--wall:#F6E7C9;--roof:#C8553D;--win:#D7ECFF;--wm:#F4E8D2;--bl:#FFFFFF;--tree:#2F8F55;--tree2:#4CB373;--trunk:#6B4A35;--owl:#7A6650;--bird:#2B3A4A;
+--sunA:#FFF3B0;--sunB:#FFE88A}
+.scn[data-scene="dusk"]{--m1:#8A6FB0;--m2:#5C4A8F;--m3:#3D3573;--fg:#2B2A5A;--snow:#FFD9C8;--cloud:#FFB199;--water:#C77F9A;--refl:#FFB35C;--smoke:#E9C7D0;
+--wall:#E9C7B0;--roof:#8E3B4F;--win:#FFD36B;--wm:#D9B9A6;--bl:#F5D9CF;--tree:#33346A;--tree2:#4A4A88;--trunk:#2A2145;--bird:#2A2145;--sunA:#FFB35C;--sunB:#FF8A4C}
+.scn[data-scene="night"]{--m1:#20306E;--m2:#17245A;--m3:#101A45;--fg:#0B1337;--snow:#6C7DC0;--cloud:#4A5BA0;--water:#1A2C70;--refl:#FFF4CF;--smoke:#7C8CC8;
+--wall:#5B6AA8;--roof:#3A2A55;--win:#FFD36B;--wm:#3A4A8A;--bl:#8C9AD4;--tree:#14224F;--tree2:#1C2E66;--trunk:#0B1337;--bird:#0B1337;--sunA:#FFB35C;--sunB:#FF8A4C}
+.scn[data-mood="over"][data-scene="day"]{--cloud:#8E99A8}
+.scn[data-mood="over"][data-scene="dusk"]{--cloud:#8A7A9A}
+.scn[data-mood="over"][data-scene="night"]{--cloud:#3A4468}
+
+.sky{position:absolute;inset:0;opacity:0;transition:opacity 1.6s ease}
+.sky-day{background:linear-gradient(180deg,#3D8BF2 0%,#6DB4FF 46%,#BFE4FF 100%)}
+.sky-dusk{background:linear-gradient(180deg,#2B2F7A 0%,#7B4A9E 38%,#FF7E6B 72%,#FFC58A 100%)}
+.sky-night{background:linear-gradient(180deg,#050816 0%,#0D1646 46%,#233A8C 100%)}
+.scn[data-scene="day"] .sky-day,.scn[data-scene="dusk"] .sky-dusk,.scn[data-scene="night"] .sky-night{opacity:1}
+.scn::after{content:"";position:absolute;inset:0;background:rgba(35,45,70,.3);opacity:0;transition:opacity 1.6s ease}
+.scn[data-mood="over"]::after{opacity:1}
+.scn svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+
+/* colors (they ease between scenes) */
+.scn svg :is(path,rect,ellipse,circle,polygon,line){transition:fill 1.4s ease,stroke 1.4s ease,opacity 1.4s ease}
+.m1{fill:var(--m1)}.m2{fill:var(--m2)}.m3{fill:var(--m3)}.fg{fill:var(--fg)}
+.snow path{fill:var(--snow);opacity:.85}
+.cld{fill:var(--cloud);opacity:.95}
+.wall{fill:var(--wall)}.roof{fill:var(--roof)}.door{fill:var(--trunk)}.win{fill:var(--win)}
+.glow{fill:#FFD36B;opacity:0}
+.scn[data-scene="dusk"] .glow{opacity:.35}.scn[data-scene="night"] .glow{opacity:.55}
+.wmb{fill:var(--wm)}.bl{fill:var(--bl)}.sail{fill:var(--bl);opacity:.7}
+.trk{fill:var(--trunk)}.tre{fill:var(--tree)}.tre2{fill:var(--tree2);opacity:.55}
+.brn{stroke:var(--trunk);stroke-width:3;stroke-linecap:round}
+.pond{fill:var(--water)}.pondhi{fill:#fff;opacity:.16}.refl{fill:var(--refl);opacity:.45}
+.scn[data-scene="dusk"] .refl{opacity:.7}.scn[data-scene="night"] .refl{opacity:.8}
+.rip{fill:none;stroke:#fff;stroke-opacity:.5;stroke-width:1}
+.mist{fill:#fff;opacity:0}.scn[data-scene="dusk"] .mist{opacity:.2}.scn[data-scene="night"] .mist{opacity:.14}
+.smoke circle{fill:var(--smoke);opacity:0}
+.stem{stroke:#2F8453;stroke-width:1.6;stroke-linecap:round}.sfc{fill:#FFE27A}
+.fl{opacity:0;transform:scale(.3);transform-box:fill-box;transform-origin:50% 100%;transition:opacity .8s ease,transform .8s cubic-bezier(.3,1.5,.5,1)}
+.fl.on{opacity:1;transform:none}
+.scn[data-scene="night"] .fl circle:not(.sfc){opacity:.75}
+.star{fill:#fff;opacity:0;transform-box:fill-box;transform-origin:center}
+.stars{transition:opacity 1.4s}
+.scn[data-scene="night"] .star{opacity:1}
+.scn[data-scene="dusk"] .star.hi{opacity:.8}
+.shoot path{stroke:#fff;stroke-width:1.6;stroke-linecap:round;fill:none}
+.shoot{opacity:0}
+.bird path{fill:none;stroke:var(--bird);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.owlb{fill:var(--owl)}.oe circle{fill:#FFE27A}
+.log{fill:#5A3A24}
+.bl,.sail{transition:fill 1.4s ease}
+
+/* sun, moon, rays: slide with the time of day */
+.sun,.moon{transition:transform 2s var(--ease),opacity 1.6s ease}
+.sun0{fill:var(--sunA);opacity:.22}.sun1{fill:var(--sunA);opacity:.4}.sun2{fill:var(--sunA)}
+.sun{opacity:1}
+.scn[data-scene="dusk"] .sun{transform:translateY(48px)}
+.scn[data-scene="night"] .sun{transform:translateY(150px);opacity:0}
+.mn0{fill:#FFF6D6;opacity:.16}.mn1{fill:#FFF4CF}.mn2{fill:#E8DCAE}
+.moon{opacity:0;transform:translateY(-26px)}
+.scn[data-scene="dusk"] .moon{opacity:.4;transform:none}
+.scn[data-scene="night"] .moon{opacity:1;transform:none}
+.scn[data-mood="over"] .sun{opacity:.3}
+.scn[data-mood="over"] .moon{opacity:.45}
+.rays{opacity:0;transition:opacity 1.6s}
+.scn[data-scene="day"] .rays{opacity:1}
+.scn[data-mood="over"] .rays{opacity:0}
+.rainbow{opacity:0;transition:opacity 1.8s}
+.scn[data-scene="day"][data-mood="good"] .rainbow{opacity:.42}
+
+/* wildlife / ambience by scene */
+.birds{transition:opacity 1.4s}
+.scn[data-scene="day"] .birds{opacity:1}.scn[data-scene="dusk"] .birds{opacity:.75}.scn[data-scene="night"] .birds{opacity:0}
+.bird{transform:translateX(120px)}
+.flies{opacity:0;transition:opacity 1.4s}.scn[data-scene="dusk"] .flies{opacity:.85}.scn[data-scene="night"] .flies{opacity:1}
+.lanterns{opacity:0;transition:opacity 1.6s}.scn[data-scene="dusk"] .lanterns{opacity:1}
+.lan{transform:translateY(120px)}
+.owl{opacity:0;transition:opacity 1.4s}.scn[data-scene="night"] .owl{opacity:1}
+.fire{opacity:0;transition:opacity 1.4s}.scn[data-scene="night"] .fire{opacity:1}
+.rain{opacity:0;transition:opacity 1s}.scn[data-mood="over"] .rain{opacity:.7}
+.rain line{stroke:#CFE3FF;stroke-width:1.1;stroke-linecap:round}
+
+/* village: cottages appear as cigarettes avoided adds up */
+.v1,.v2,.v3{opacity:0;transition:opacity .9s ease}
+.vh{transform-box:fill-box;transform-origin:50% 100%;transform:scale(.6) translateY(6px);transition:transform .9s cubic-bezier(.3,1.4,.5,1)}
+.scn[data-v="1"] .v1,.scn[data-v="2"] :is(.v1,.v2),.scn[data-v="3"] :is(.v1,.v2,.v3){opacity:1}
+.scn[data-v="1"] .v1 .vh,.scn[data-v="2"] :is(.v1,.v2) .vh,.scn[data-v="3"] :is(.v1,.v2,.v3) .vh{transform:none}
+
+/* motion: transform + opacity only */
+.scl{animation:cdrift 46s ease-in-out infinite alternate}.scl2{animation-duration:58s;animation-delay:-20s}.scl3{animation-duration:38s;animation-delay:-9s}
+@keyframes cdrift{from{transform:translateX(-26px)}to{transform:translateX(34px)}}
+.sway{transform-box:fill-box;transform-origin:50% 100%;animation:sway 5.2s ease-in-out infinite alternate}.sw2{animation-delay:-2s;animation-duration:6s}.sw3{animation-delay:-3.4s;animation-duration:4.6s}
+@keyframes sway{from{transform:rotate(-1.4deg)}to{transform:rotate(1.4deg)}}
+.spin{transform-box:fill-box;transform-origin:center;animation:spin 10s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.star{animation:twk 3.6s ease-in-out infinite}
+@keyframes twk{0%,100%{transform:scale(1)}50%{transform:scale(.45)}}
+.shoot{animation:shoot 12s linear infinite 3s}
+@keyframes shoot{0%,86%{opacity:0;transform:translate(240px,20px)}88%{opacity:1}96%{opacity:1;transform:translate(110px,70px)}100%{opacity:0;transform:translate(100px,74px)}}
+.scn:not([data-scene="night"]) .shoot{animation:none}
+.bird{animation:fly 26s linear infinite}.b2{animation-duration:34s;animation-delay:-12s}.b3{animation-duration:30s;animation-delay:-21s}
+@keyframes fly{from{transform:translateX(-40px)}to{transform:translateX(440px)}}
+.bird path{transform-box:fill-box;transform-origin:center;animation:flap .55s ease-in-out infinite alternate}
+@keyframes flap{from{transform:scaleY(1)}to{transform:scaleY(.4)}}
+.rays polygon{animation:ray 7s ease-in-out infinite alternate}.rays polygon:nth-child(2){animation-delay:-2.5s}.rays polygon:nth-child(3){animation-delay:-5s}
+@keyframes ray{from{opacity:.35}to{opacity:1}}
+.mist{animation:mist 30s ease-in-out infinite alternate}
+@keyframes mist{from{transform:translateX(-24px)}to{transform:translateX(24px)}}
+.smoke circle{animation:puff 4.2s ease-out infinite}.smoke circle:nth-child(2){animation-delay:-1.4s}.smoke circle:nth-child(3){animation-delay:-2.8s}
+@keyframes puff{0%{opacity:.7;transform:translate(0,0) scale(.6)}100%{opacity:0;transform:translate(10px,-22px) scale(2.2)}}
+.rip{transform-box:fill-box;transform-origin:center;animation:rip 4.6s ease-out infinite}.r2{animation-delay:-2.3s}
+@keyframes rip{0%{transform:scale(.25);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+.fw{animation:ff0 9s ease-in-out infinite}.fw.f1{animation:ff1 11s ease-in-out infinite}.fw.f2{animation-duration:7.5s}.fw.f3{animation:ff1 8.5s ease-in-out infinite reverse}
+@keyframes ff0{0%,100%{transform:translate(0,0);opacity:.2}25%{transform:translate(12px,-9px);opacity:1}50%{transform:translate(20px,3px);opacity:.35}75%{transform:translate(7px,11px);opacity:1}}
+@keyframes ff1{0%,100%{transform:translate(0,0);opacity:.9}30%{transform:translate(-14px,-6px);opacity:.25}60%{transform:translate(-6px,10px);opacity:1}80%{transform:translate(8px,4px);opacity:.3}}
+.lan{animation:lift 22s linear infinite}.l1{animation-duration:27s;animation-delay:-11s}.l2{animation-duration:24s;animation-delay:-17s}.l3{animation-duration:29s;animation-delay:-7s}.l0{animation-delay:-3s}
+@keyframes lift{0%{transform:translate(0,330px);opacity:0}8%{opacity:1}25%{transform:translate(10px,250px)}50%{transform:translate(-8px,170px)}75%{transform:translate(8px,90px)}92%{opacity:1}100%{transform:translate(0,10px);opacity:0}}
+.flame{transform-box:fill-box;transform-origin:50% 100%;animation:flick .45s ease-in-out infinite alternate}
+@keyframes flick{from{transform:scale(1,.9)}to{transform:scale(1.1,1.08)}}
+.fglow{animation:fpulse 1.8s ease-in-out infinite alternate}
+@keyframes fpulse{from{opacity:.75}to{opacity:1}}
+.oe{transform-box:fill-box;transform-origin:center;animation:oblk 5.5s infinite}
+@keyframes oblk{0%,92%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+.rain line{animation:drop 1.4s linear infinite}
+@keyframes drop{from{transform:translate(0,0)}to{transform:translate(-14px,380px)}}
+
+/* calm: while a craving wait runs the world hushes and the pond ripples */
+.scn.calm :is(.scl,.bird,.fw,.lan,.spin,.sway,.flame,.smoke circle,.mist,.rain line){animation-play-state:paused}
+.scn.calm .rip{animation-duration:3.2s;stroke-opacity:.9}
+@media (prefers-reduced-motion:reduce){.scn *{animation:none!important}}

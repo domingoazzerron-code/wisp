@@ -5,9 +5,10 @@ import { gapData, spacingView } from '../lib/gaps.ts';
 import { startOfDay } from '../lib/dates.ts';
 import { money } from '../lib/format.ts';
 import { per } from '../lib/streaks.ts';
+import { CardArt } from './CardArt.tsx';
 
 /**
- * Collapsible "More about today": spacing challenge + spent today (legacy #more).
+ * "More about today" card: spacing challenge + spent today (legacy #more). Always open now, one of the Today cards.
  * Gap celebration side-effect is owned by useGapRecord (already in the app shell).
  */
 export function MoreAboutToday({ now }: { now: number }) {
@@ -23,9 +24,11 @@ export function MoreAboutToday({ now }: { now: number }) {
   const spent = t * p;
 
   return (
-    <details class="card" id="more">
-      <summary>More about today</summary>
-      <div id="spc" class="mt-s">
+    <div class="card tcard" id="more">
+      <CardArt kind="spacing" pill={t + (t === 1 ? ' stick' : ' sticks')} />
+      <div class="tbody">
+      <div class="dh"><span class="bn">Spacing &amp; spending</span></div>
+      <div id="spc">
         <div class="k lbl">Spacing challenge</div>
         <div class="big" id="spb">{sp.big}</div>
         <div class="k left" id="sps">{sp.sub}</div>
@@ -37,6 +40,7 @@ export function MoreAboutToday({ now }: { now: number }) {
         </div>
         <div class="sub" id="s1">{t + (t === 1 ? ' stick' : ' sticks')}</div>
       </div>
-    </details>
+      </div>
+    </div>
   );
 }

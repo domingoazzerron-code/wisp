@@ -60,7 +60,7 @@ export function Header({
   }
 
   return (
-    <header class="top">
+    <header class={'top' + (view === 'today' ? ' over' : '')}>
       <a class="flm" id="flm" href="#plan" aria-label="Streak and achievements">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 2c.6 3.4 5.4 5.6 5.4 11A5.4 5.4 0 0 1 6.6 13c0-2 1-3.4 2.2-4.4.1 2 .9 3 2 3.2C10.4 8.6 10.6 5.2 12 2z" />

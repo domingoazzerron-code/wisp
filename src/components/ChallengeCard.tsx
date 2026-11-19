@@ -6,6 +6,7 @@ import { liveIndex } from '../lib/current.ts';
 import {
   CHT, CHK, activeChalView, chalCtx, type ChallengeId,
 } from '../lib/challenges.ts';
+import { CardArt } from './CardArt.tsx';
 
 /**
  * Challenge card on Today (legacy #chc).
@@ -30,10 +31,11 @@ export function ChallengeCard({ now }: { now: number }) {
 
   if (active && view) {
     return (
-      <div class="card" id="chc">
+      <div class="card tcard" id="chc">
+        <CardArt kind="challenge" pill={view.dayLabel} />
+        <div class="tbody">
         <div class="dh">
           <span class="bn">Challenge</span>
-          <small>{view.dayLabel}</small>
         </div>
         <div class="mtx">{view.name}</div>
         <div class="cdots" role="img" aria-label={view.okCount + ' of ' + c.days + ' days done'}>
@@ -46,6 +48,7 @@ export function ChallengeCard({ now }: { now: number }) {
           <button class="btn txt sm" type="button" onClick={() => stopChallenge()}>
             Stop challenge
           </button>
+        </div>
         </div>
       </div>
     );
@@ -72,7 +75,9 @@ export function ChallengeCard({ now }: { now: number }) {
   }
 
   return (
-    <div class="card" id="chc">
+    <div class="card tcard" id="chc">
+      <CardArt kind="challenge" pill="3 or 7 days" />
+      <div class="tbody">
       <div class="dh"><span class="bn">Challenges</span></div>
       {resultBlock}
       <div class="k left">Pick a 3 or 7 day goal. Finish it for a badge and stars.</div>
@@ -103,6 +108,7 @@ export function ChallengeCard({ now }: { now: number }) {
           </button>
         </div>
       )}
+      </div>
     </div>
   );
 }

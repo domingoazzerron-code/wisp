@@ -4,6 +4,8 @@ import { GHOST_SVG } from './ghost.ts';
 import { CIG_LIT_AT } from '../lib/today.ts';
 import { formLabel } from '../lib/evolution.ts';
 import { buzz } from '../lib/buzz.ts';
+import { Scene } from './Scene.tsx';
+import type { Mood, SceneId } from '../lib/scene.ts';
 
 interface Props {
   level: number;        // 0..6, from wispLevel()
@@ -14,6 +16,15 @@ interface Props {
   subline: string;
   onPoke: () => void;
   why?: ComponentChildren; // trigger chips / wait button under the caption
+  scene: SceneId;       // day / dusk / night artwork
+  mood: Mood;           // weather: clear while on track, drizzle when over the limit
+  flowers: number;      // foreground flowers (streak)
+  village: number;      // cottages (cigarettes avoided)
+  calm: boolean;        // craving wait running
+  date: string;         // 'Thursday, 19 November'
+  greeting: ComponentChildren; // 'Good evening, <b>Name</b>!'
+  initial: string;      // avatar letter
+  onAvatar: () => void; // opens the account drawer
 }
 
 /** Set .ev opacity from data-ev (legacy evSet). */
@@ -27,8 +38,11 @@ function applyEvoVisual(root: HTMLElement | null, st: number): void {
   }
 }
 
-/** Wisp's banner: sprite at the left, speech bubble (form name, caption, small line) at the right. */
-export function Wisp({ level, count, evo, caption, healed, subline, onPoke, why }: Props) {
+/** Today hero: the day / dusk / night scene with the greeting on top, Wisp standing in it and a speech bubble beside him. */
+export function Wisp({
+  level, count, evo, caption, healed, subline, onPoke, why,
+  scene, mood, flowers, village, calm, date, greeting, initial, onAvatar,
+}: Props) {
   const ban = useRef<HTMLDivElement>(null);
   const mas = useRef<HTMLDivElement>(null);
   const prev = useRef<number | null>(null);
@@ -52,21 +66,35 @@ export function Wisp({ level, count, evo, caption, healed, subline, onPoke, why 
 
   return (
     <div
-      ref={ban} class={'ban' + (healed ? ' healed' : '')} id="masc"
-      data-st={level} data-cig={count >= CIG_LIT_AT ? '1' : '0'} style={{ '--s': String(level) }}
+      ref={ban} class={'hero2' + (healed ? ' healed' : '')} id="masc"
+      data-st={level} data-cig={count >= CIG_LIT_AT ? '1' : '0'} data-scene={scene} style={{ '--s': String(level) }}
     >
-      <div
-        ref={mas}
-        id="mas" role="button" tabIndex={0} aria-label="Wisp. Tap to poke"
-        onClick={poke}
-        onKeyDown={(e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); poke(); } }}
-        dangerouslySetInnerHTML={{ __html: GHOST_SVG }}
-      />
-      <div class="bub">
-        <div class="bn" id="bn">{formLabel(evo)}</div>
-        <div id="mcap">{caption}</div>
-        <div class="k" id="msub">{subline}</div>
-        {why}
+      <Scene scene={scene} mood={mood} flowers={flowers} village={village} calm={calm} />
+      <div class="hscrim" aria-hidden="true" />
+      <div class="hgr">
+        <button class="avt" id="avt" type="button" aria-label="Open account and style" onClick={onAvatar}>{initial}</button>
+        <div class="hgt">
+          <div id="date">{date}</div>
+          <div id="gr">{greeting}</div>
+        </div>
+      </div>
+      <div class="hstage">
+        <div class="bub">
+          <div class="bn" id="bn">{formLabel(evo)}</div>
+          <div id="mcap">{caption}</div>
+          <div class="k" id="msub">{subline}</div>
+          {why}
+        </div>
+        <div class="mwrap">
+          <div class="aura" aria-hidden="true" />
+          <div
+            ref={mas}
+            id="mas" role="button" tabIndex={0} aria-label="Wisp. Tap to poke"
+            onClick={poke}
+            onKeyDown={(e: KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); poke(); } }}
+            dangerouslySetInnerHTML={{ __html: GHOST_SVG }}
+          />
+        </div>
       </div>
     </div>
   );

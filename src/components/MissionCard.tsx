@@ -4,6 +4,7 @@ import { useStore } from '../hooks/useStore.ts';
 import { checkMission, ensureTodayMission, markMissionDone, swapMission } from '../actions/mission.ts';
 import { liveIndex } from '../lib/current.ts';
 import { missionCtx, missionView } from '../lib/missions.ts';
+import { CardArt } from './CardArt.tsx';
 
 const STAR_SVG = (
   <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -32,19 +33,25 @@ export function MissionCard({ now, onOpenWardrobe }: { now: number; onOpenWardro
   const open = () => { if (onOpenWardrobe) onOpenWardrobe(); };
 
   return (
-    <div class={'card mis' + (view.done ? ' ok' : '')} id="mis">
+    <div class={'card tcard mis' + (view.done ? ' ok' : '')} id="mis">
+      <CardArt
+        kind="mission"
+        pill={(
+          <button
+            class="stb"
+            id="stb"
+            type="button"
+            aria-label="Your stars. Open Wisp’s wardrobe"
+            onClick={open}
+          >
+            {STAR_SVG}
+            <b id="stn">{stars}</b>
+          </button>
+        )}
+      />
+      <div class="tbody">
       <div class="dh">
         <span class="bn">Today’s mission</span>
-        <button
-          class="stb"
-          id="stb"
-          type="button"
-          aria-label="Your stars. Open Wisp’s wardrobe"
-          onClick={open}
-        >
-          {STAR_SVG}
-          <b id="stn">{stars}</b>
-        </button>
       </div>
       <div class="mtx" id="mtx">{view.title}</div>
       <div class="k left" id="mst" role="status">{view.sub}</div>
@@ -73,6 +80,7 @@ export function MissionCard({ now, onOpenWardrobe }: { now: number; onOpenWardro
             ) : null}
           </>
         )}
+      </div>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import type { ComponentChildren } from 'preact';
 import { useEffect, useRef } from 'preact/hooks';
 import { GHOST_SVG } from './ghost.ts';
 import { CIG_LIT_AT } from '../lib/today.ts';
@@ -12,6 +13,7 @@ interface Props {
   healed: boolean;      // glow class while a heal / celebration is recent
   subline: string;
   onPoke: () => void;
+  why?: ComponentChildren; // trigger chips / wait button under the caption
 }
 
 /** Set .ev opacity from data-ev (legacy evSet). */
@@ -26,7 +28,7 @@ function applyEvoVisual(root: HTMLElement | null, st: number): void {
 }
 
 /** Wisp's banner: sprite at the left, speech bubble (form name, caption, small line) at the right. */
-export function Wisp({ level, count, evo, caption, healed, subline, onPoke }: Props) {
+export function Wisp({ level, count, evo, caption, healed, subline, onPoke, why }: Props) {
   const ban = useRef<HTMLDivElement>(null);
   const mas = useRef<HTMLDivElement>(null);
   const prev = useRef<number | null>(null);
@@ -64,6 +66,7 @@ export function Wisp({ level, count, evo, caption, healed, subline, onPoke }: Pr
         <div class="bn" id="bn">{formLabel(evo)}</div>
         <div id="mcap">{caption}</div>
         <div class="k" id="msub">{subline}</div>
+        {why}
       </div>
     </div>
   );

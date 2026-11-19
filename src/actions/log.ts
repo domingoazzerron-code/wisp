@@ -1,4 +1,5 @@
 import { addEntry, getState, removeEntry, restoreEntry, save } from '../state/index.ts';
+import { setWhyTs } from '../components/pokeState.ts';
 import { toast } from '../components/Toasts.tsx';
 import { alertBox, slipPrompt } from '../components/Overlay.tsx';
 import { lim, countSince, lastTs, liveIndex, gapLeft } from '../lib/current.ts';
@@ -17,6 +18,8 @@ export function logCigarette(): void {
   const cel = logCelebration(gapData(liveIndex, t0), lastTs(), t0);
   if (cel) getState().cel = cel;
   const now = addEntry(t0);
+  setWhyTs(now);
+  save(); // re-render so the mascot card shows the trigger chips
   const t = countSince(1);
   const L = lim();
   if (L > 0 && t > L) {

@@ -20,3 +20,8 @@ export function clearPoke(): void {
   text = '';
   until = 0;
 }
+
+// Which new entry the mascot card is asking "What set it off?" about (legacy whyTs). 0 = none.
+let whyTs = 0;
+export function getWhyTs(): number { return whyTs; }
+export function setWhyTs(ts: number): void { whyTs = ts; }

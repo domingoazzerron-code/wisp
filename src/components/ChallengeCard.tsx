@@ -61,15 +61,9 @@ export function ChallengeCard({ now }: { now: number }) {
     const T2 = CHT[p[0] as ChallengeId];
     if (T2) {
       resultBlock = r.ok ? (
-        <div class="cres">
-          <b>Badge earned: {T2.n}</b>
-          <span>{p[1]} days done. +{r.s} stars. Wisp is so proud.</span>
-        </div>
+        <div class="clast ok">Last time: {T2.n} badge earned, +{r.s} stars</div>
       ) : (
-        <div class="cres bad">
-          <b>Not this time</b>
-          <span>{T2.n} ended early, and that’s okay. Try it again whenever you like.</span>
-        </div>
+        <div class="clast">Last time: {T2.n} ended early. Try it again whenever you like.</div>
       );
     }
   }
@@ -79,8 +73,6 @@ export function ChallengeCard({ now }: { now: number }) {
       <CardArt kind="challenge" pill="3 or 7 days" />
       <div class="tbody">
       <div class="dh"><span class="bn">Challenges</span></div>
-      {resultBlock}
-      <div class="k left">Pick a 3 or 7 day goal. Finish it for a badge and stars: {chalStarReward(3)} for 3 days, {chalStarReward(7)} for 7.</div>
       {open ? (
         <>
           {CHK.map((id) => (
@@ -108,6 +100,8 @@ export function ChallengeCard({ now }: { now: number }) {
           </button>
         </div>
       )}
+      <div class="k left cnote">Finish one for a badge and stars: {chalStarReward(3)} for 3 days, {chalStarReward(7)} for 7.</div>
+      {resultBlock}
       </div>
     </div>
   );

@@ -157,7 +157,7 @@ export function Today() {
       />
       <Hero
         count={t} limit={L} quitActive={quitActive} canUndo={canUndoLast()}
-        last={last} gapMin={s.gap} gapBase={gapBase()} now={now}
+        gapMin={s.gap} gapBase={gapBase()} now={now}
         craving={!!s.craveEnd && s.craveEnd > now} onUndo={undoLast}
         onWait={() => { startCrave(); toast('10 minute wait started'); }}
       />

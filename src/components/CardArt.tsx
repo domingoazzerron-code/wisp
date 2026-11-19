@@ -4,7 +4,7 @@ import type { ComponentChildren } from 'preact';
 export function CardArt({ kind, pill }: { kind: 'mission' | 'challenge' | 'spacing'; pill?: ComponentChildren }) {
   return (
     <div class={'tart tart-' + kind}>
-      <svg viewBox="0 0 300 110" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <svg viewBox="0 0 300 110" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
         {kind === 'mission' ? (
           <>
             <circle cx="238" cy="30" r="16" fill="#FFF3B0" opacity=".9" />

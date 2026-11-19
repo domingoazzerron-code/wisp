@@ -63,9 +63,11 @@ export function healsToday(heals: readonly number[], t: number, yesterday: numbe
 
 /** Small line under Wisp's caption (legacy #msub). */
 export function wispSubline(t: number, limit: number, heals: number, limitYesterday: number): string {
-  return (t ? (limit > 0 ? t + ' of ' + limit + ' today' : t + ' today') : 'No cigarettes yet today')
-    + (heals ? ' · ' + heals + ' heal' + (heals > 1 ? 's' : '') : '')
-    + (limit > 0 && limit < limitYesterday ? ' · limit lowered to ' + limit : '');
+  // The count itself lives in the big number and the progress bar, so the bubble only adds what they don't show.
+  const parts: string[] = [];
+  if (heals) parts.push(heals + ' heal' + (heals > 1 ? 's' : ''));
+  if (limit > 0 && limit < limitYesterday) parts.push('limit lowered to ' + limit);
+  return parts.join(' \u00b7 ');
 }
 
 /** 'Last one 1h 2m 3s ago, at 3:05 PM' or the empty-state line. */

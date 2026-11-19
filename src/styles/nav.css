@@ -39,3 +39,6 @@ nav{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area
 .sw{animation:sw .32s var(--ease)}@keyframes sw{from{opacity:.3;transform:translateY(6px)}to{opacity:1;transform:none}}
 
 
+
+/* soft fade behind the floating nav so page text never shows underneath the pill (below nav z10, drawers z30, overlays) */
+body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:calc(var(--navfade,68px) + 12px + 32px + env(safe-area-inset-bottom,0px));background:linear-gradient(180deg,color-mix(in srgb,var(--bg) 0%,transparent),var(--bg) 62%);z-index:9;pointer-events:none}

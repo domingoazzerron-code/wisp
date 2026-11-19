@@ -82,7 +82,7 @@ export function Wisp({
         <div class="bub">
           <div class="bn" id="bn">{formLabel(evo)}</div>
           <div id="mcap">{caption}</div>
-          <div class="k" id="msub">{subline}</div>
+          {subline ? <div class="k" id="msub">{subline}</div> : null}
           {why}
         </div>
         <div class="mwrap">

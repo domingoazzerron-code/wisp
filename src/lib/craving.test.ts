@@ -41,11 +41,11 @@ describe('checkCrave', () => {
 });
 
 describe('cravSubline', () => {
-  it('shows the reasons, a default tip, or the waited-out count', () => {
+  it('shows the reasons, a default tip, or what the idle button does', () => {
     expect(cravSubline(true, 'my kids', 4)).toBe('Remember why: my kids');
     expect(cravSubline(true, '', 4)).toBe('Breathe, drink water, move around.');
-    expect(cravSubline(false, 'my kids', 4)).toBe('Waited out so far: 4');
-    expect(cravSubline(false, '', 0)).toBe('Waited out so far: 0');
+    expect(cravSubline(false, 'my kids', 4)).toBe('Start a 10 minute timer');
+    expect(cravSubline(false, '', 0)).toBe('Start a 10 minute timer');
   });
 });
 

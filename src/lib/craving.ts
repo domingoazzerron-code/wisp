@@ -42,9 +42,10 @@ export function checkCrave(craveEnd: number, now: number): CraveCheck {
 }
 
 /** Small line under the clock. */
-export function cravSubline(active: boolean, reasons: string, waited: number): string {
+export function cravSubline(active: boolean, reasons: string, _waited?: number): string {
   if (active) return reasons ? 'Remember why: ' + reasons : 'Breathe, drink water, move around.';
-  return 'Waited out so far: ' + (waited || 0);
+  // The wins count lives on the "Log a craving" row, so this line says what the button does instead.
+  return 'Start a ' + Math.round(CRAVE_MS / 60000) + ' minute timer';
 }
 
 type CraveFields = Pick<State, 'waited' | 'heals' | 'cravs' | 'healAt' | 'gapFrom' | 'craveEnd'>;

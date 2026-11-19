@@ -27,6 +27,9 @@
 .chxb{display:flex;gap:8px;margin-top:8px}.chxb .btn{flex:1}
 .cres{margin:0 0 12px;padding:12px 14px;border-radius:var(--rs);background:var(--gsoft)}
 .cres.bad{background:var(--fill)}
+.cnote{margin-top:10px}
+.clast{margin:12px 0 0;font-size:12px;line-height:1.35;color:var(--mute)}
+.clast.ok{color:var(--g)}
 .cres b{display:block;font-size:14px}.cres span{display:block;font-size:12.5px;color:var(--mute);margin-top:2px}
 #chc .k.left{margin-top:2px}
 #chc .btnrow{margin-top:8px}

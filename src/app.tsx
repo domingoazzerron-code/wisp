@@ -25,7 +25,7 @@ export const VIEWS = ['today', 'history', 'setup', 'plan', 'insights', 'summary'
 type View = (typeof VIEWS)[number];
 
 function currentView(): View {
-  const v = location.hash.replace('#', '');
+  const v = location.hash.replace('#', '').split('/')[0];
   return (VIEWS as readonly string[]).includes(v) ? (v as View) : 'today';
 }
 

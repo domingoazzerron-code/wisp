@@ -8,7 +8,7 @@ import { toast } from './Toasts.tsx';
 export const VIEW_TITLE: Record<string, string> = {
   today: '',
   history: 'History',
-  setup: 'Setup',
+  setup: 'Settings',
   plan: 'Plan',
   insights: 'Insights',
   summary: 'Quit summary',

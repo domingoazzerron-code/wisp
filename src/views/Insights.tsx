@@ -376,7 +376,7 @@ export function Insights() {
                 {s.pack} a pack, {s.per} to a pack). Enter yours so they are accurate.
               </div>
               <div class="btnrow">
-                <a class="btn ter sm" href="#setup">
+                <a class="btn ter sm" href="#setup/limits">
                   Enter my numbers
                 </a>
               </div>
@@ -389,7 +389,7 @@ export function Insights() {
                 Set your pack price in Settings, then log honestly. This page tracks what you spend, what you save, and
                 your nicotine and tar.
               </div>
-              <a class="btn ter sm u-mt12" href="#setup">
+              <a class="btn ter sm u-mt12" href="#setup/limits">
                 Open settings
               </a>
             </div>

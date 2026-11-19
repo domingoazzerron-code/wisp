@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'preact/hooks';
+import { useEffect, useState } from 'preact/hooks';
 import { getState, save } from '../state/index.ts';
 import { useStore } from '../hooks/useStore.ts';
 import { GHOST_SVG } from './ghost.ts';
@@ -7,15 +7,7 @@ import {
   FORM, hasOutfit, OUTFIT_NAME, OUTFIT_PRICE, OUTFIT_MIN_STAGE, OUTFIT_TEXT, OUTFITS,
 } from '../lib/evolution.ts';
 import type { Outfit } from '../state/types.ts';
-import {
-  applyFx,
-  applyOutfitAttr,
-  applyTheme,
-  fxLevel,
-  fxNote,
-  type FxLevel,
-  type Theme,
-} from '../lib/theme.ts';
+import { applyFx, applyOutfitAttr, applyTheme, fxLevel, type Theme } from '../lib/theme.ts';
 import {
   deleteAccount,
   getSyncStatus,
@@ -31,20 +23,8 @@ import { askConfirm } from './Overlay.tsx';
 import { toast } from './Toasts.tsx';
 import { AppLockToggle } from './AppLock.tsx';
 
-const THEMES: { id: Theme; label: string }[] = [
-  { id: 'auto', label: 'Auto' },
-  { id: 'light', label: 'Light' },
-  { id: 'dark', label: 'Dark' },
-];
-
-const FX: { id: FxLevel; label: string }[] = [
-  { id: 1, label: 'Full' },
-  { id: 2, label: 'Calm' },
-  { id: 3, label: 'Off' },
-];
-
 /**
- * Account drawer (legacy #acct): outfit, theme, motion/haptics, sign-in.
+ * Account drawer (legacy #acct): outfit, app lock, sign-in. Appearance and motion live in Settings.
  */
 export function AccountDrawer({
   open,
@@ -57,8 +37,6 @@ export function AccountDrawer({
 }) {
   useStore();
   const s = getState();
-  const themeSeg = useRef<HTMLDivElement>(null);
-  const fxSeg = useRef<HTMLDivElement>(null);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
@@ -84,18 +62,6 @@ export function AccountDrawer({
     };
   }, []);
 
-  // Seg indicator placement.
-  useLayoutEffect(() => {
-    if (!open) return;
-    for (const root of [themeSeg.current, fxSeg.current]) {
-      if (!root) continue;
-      const on = root.querySelector('button.on') as HTMLElement | null;
-      if (!on) continue;
-      root.style.setProperty('--w', on.offsetWidth + 'px');
-      root.style.setProperty('--x', on.offsetLeft + 'px');
-    }
-  }, [open, s.theme, s.fx]);
-
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -104,21 +70,6 @@ export function AccountDrawer({
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
   }, [open, onClose]);
-
-  function setTheme(t: Theme) {
-    const st = getState();
-    st.theme = t;
-    save();
-    applyTheme(t);
-  }
-
-  function setFx(level: FxLevel) {
-    const st = getState();
-    st.fx = level;
-    st.hap = level === 3 ? 0 : 1;
-    save();
-    applyFx(level);
-  }
 
   function pickOutfit(id: Outfit) {
     const st = getState();
@@ -186,8 +137,6 @@ export function AccountDrawer({
   const owned = s.owned || [];
   const stars = s.stars || 0;
   const current = (s.outfit || 'none') as Outfit;
-  const level = fxLevel(s);
-  const theme = (s.theme as Theme) || 'auto';
 
   return (
     <aside
@@ -279,46 +228,7 @@ export function AccountDrawer({
         </div>
       </div>
 
-      <div class="dg" style={{ '--i': 4 }}>
-        Preferences
-      </div>
-      <div class="pref" id="prefs" style={{ '--i': 5 }}>
-        <span class="pl">Appearance</span>
-        <div class="seg" id="theme" role="group" aria-label="Appearance" ref={themeSeg}>
-          {THEMES.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              data-t={t.id}
-              class={theme === t.id ? 'on' : ''}
-              aria-pressed={theme === t.id}
-              onClick={() => setTheme(t.id)}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-        <span class="pl">Motion and haptics</span>
-        <div class="seg" id="fxs" role="group" aria-label="Motion and haptics" ref={fxSeg}>
-          {FX.map((f) => (
-            <button
-              key={f.id}
-              type="button"
-              data-m={f.id}
-              class={level === f.id ? 'on' : ''}
-              aria-pressed={level === f.id}
-              onClick={() => setFx(f.id)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-        <div class="k" id="fxn">
-          {fxNote(level)}
-        </div>
-      </div>
-
-      <div class="accs" style={{ '--i': 6 }}>
+      <div class="accs" style={{ '--i': 4 }}>
         <div class="dg">Account</div>
         <AppLockToggle />
         {signedIn ? (

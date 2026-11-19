@@ -68,7 +68,7 @@ export function TodayNudges({ now }: { now: number }) {
               class="btn pri sm"
               type="button"
               id="bkgo"
-              onClick={() => { location.hash = '#setup'; }}
+              onClick={() => { location.hash = '#setup/data'; }}
             >
               Back up now
             </button>

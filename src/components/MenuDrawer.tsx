@@ -16,7 +16,7 @@ const LINKS: LinkDef[] = [
     icon: <path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z" />,
   },
   {
-    view: 'setup', label: 'Setup', sub: 'Backup, triggers and your data',
+    view: 'setup', label: 'Settings', sub: 'Appearance, limits and your data',
     icon: <path d="M4 7h10M18 7h2M4 17h2M10 17h10M16 7m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0M8 17m-2 0a2 2 0 1 0 4 0a2 2 0 1 0-4 0" />,
   },
 ];

@@ -4,7 +4,7 @@ import { useStore } from '../hooks/useStore.ts';
 import { checkChallenge, startChallenge, stopChallenge } from '../actions/challenge.ts';
 import { liveIndex } from '../lib/current.ts';
 import {
-  CHT, CHK, activeChalView, chalCtx, type ChallengeId,
+  CHT, CHK, activeChalView, chalCtx, chalStarReward, type ChallengeId,
 } from '../lib/challenges.ts';
 import { CardArt } from './CardArt.tsx';
 
@@ -80,7 +80,7 @@ export function ChallengeCard({ now }: { now: number }) {
       <div class="tbody">
       <div class="dh"><span class="bn">Challenges</span></div>
       {resultBlock}
-      <div class="k left">Pick a 3 or 7 day goal. Finish it for a badge and stars.</div>
+      <div class="k left">Pick a 3 or 7 day goal. Finish it for a badge and stars: {chalStarReward(3)} for 3 days, {chalStarReward(7)} for 7.</div>
       {open ? (
         <>
           {CHK.map((id) => (

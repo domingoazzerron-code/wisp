@@ -77,7 +77,7 @@ export function MenuDrawer({
         </button>
       </div>
 
-      <nav class="sbnav" aria-label="Pages">
+      <div class="sbnav" role="navigation" aria-label="Pages">
         {MAIN.map((l) => (
           <NavLink key={l.view} l={l} current={current} onClose={onClose} badge={l.view === 'today' ? countSince(1) : 0} />
         ))}
@@ -93,7 +93,7 @@ export function MenuDrawer({
             ))}
           </div>
         </div>
-      </nav>
+      </div>
 
       <div class="sbgap" />
 
